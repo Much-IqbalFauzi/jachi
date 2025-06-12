@@ -19,6 +19,8 @@ struct ContentView: View {
                         MainScreen()
                     case .dialog:
                         DialogScreen()
+                    case .dummy:
+                        DummyScreen()
                     }
                 }
         }

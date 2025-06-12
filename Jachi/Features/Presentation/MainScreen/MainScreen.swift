@@ -18,6 +18,9 @@ struct MainScreen: View {
             ExampleButton(text: "Detail") {
                 self.navigation.navigate(to: .dialog)
             }
+            ExampleButton(text: "Dummy") {
+                self.navigation.navigate(to: .dummy)
+            }
         }
     }
 }
