@@ -1,0 +1,29 @@
+//
+//  ContentView.swift
+//  Jachi
+//
+//  Created by Muchamad Iqbal Fauzi on 12/06/25.
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    @StateObject private var navigation = Navigation()
+    
+    var body: some View {
+        NavigationStack(path: $navigation.path) {
+            MainScreen()
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .main:
+                        MainScreen()
+                    case .dialog:
+                        DialogScreen()
+                    }
+                }
+        }
+        .environmentObject(navigation)
+        .preferredColorScheme(.light)
+    }
+}
+
