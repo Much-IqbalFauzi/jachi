@@ -90,12 +90,11 @@ iOSInjectionProject/
 ## Xcode 8 and earlier
 
 ### Xcode Patch ###
-*.xcodeproj/**
-Solari.xcodeproj/project.xcworkspace/xcshareddata/**
-Solari.xcodeproj/project.xcworkspace/xcuserdata/**
-Solari.xcodeproj/xcuserdata/**
+Jachi.xcodeproj/project.xcworkspace/xcshareddata/**
+Jachi.xcodeproj/project.xcworkspace/xcuserdata/**
+Jachi.xcodeproj/xcuserdata/**
 **/xcuserdata/**/**.xcuserstate
-Solari.xcodeproj/project.pbxproj
+#Jachi.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/xcuserdata/
 !*.xcodeproj/project.xcworkspace/
