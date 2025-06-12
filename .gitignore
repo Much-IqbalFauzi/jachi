@@ -94,7 +94,7 @@ Jachi.xcodeproj/project.xcworkspace/xcshareddata/**
 Jachi.xcodeproj/project.xcworkspace/xcuserdata/**
 Jachi.xcodeproj/xcuserdata/**
 **/xcuserdata/**/**.xcuserstate
-#Jachi.xcodeproj/project.pbxproj
+Jachi.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/xcuserdata/
 !*.xcodeproj/project.xcworkspace/
