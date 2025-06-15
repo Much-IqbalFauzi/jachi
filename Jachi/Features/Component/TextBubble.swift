@@ -15,8 +15,10 @@ struct TextBubble<Content: View>: View {
     private var speaker: () -> Void
     private var slow: () -> Void
     private var translate: () -> Void
+    private var isError: Bool
 
     init(
+        isError: Bool = false,
         radius: CGFloat = 16,
         isUser: Bool = true,
         speaker: @escaping () -> Void,
@@ -30,33 +32,36 @@ struct TextBubble<Content: View>: View {
         self.speaker = speaker
         self.slow = slow
         self.translate = translate
+        self.isError = isError
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             content()
-            Rectangle()
-                .frame(width: .infinity, height: 1)
-                .foregroundColor(isUser ? .dustBlizzard : .dustPink)
-            HStack(spacing: 10) {
-                PressableIcon(
-                    icon: "speaker.wave.2",
-                    color: isUser ? .dustBlizzard : .dustPink,
-                    onPress: speaker
-                )
-                PressableIcon(
-                    icon: "tortoise",
-                    color: isUser ? .dustBlizzard : .dustPink,
-                    onPress: slow
-                )
-                .padding(.horizontal, 10)
-                PressableIcon(
-                    icon: "translate",
-                    color: isUser ? .dustBlizzard : .dustPink,
-                    onPress: translate
-                )
+            if (!isError) {
+                Rectangle()
+                    .frame(width: .infinity, height: 1)
+                    .foregroundColor(isUser ? .dustBlizzard : .dustPink)
+                HStack {
+                    PressableIcon(
+                        icon: "speaker.wave.2",
+                        color: isUser ? .dustBlizzard : .dustPink,
+                        onPress: speaker
+                    )
+                    PressableIcon(
+                        icon: "tortoise",
+                        color: isUser ? .dustBlizzard : .dustPink,
+                        onPress: slow
+                    )
+                    .padding(.horizontal, 10)
+                    PressableIcon(
+                        icon: "translate",
+                        color: isUser ? .dustBlizzard : .dustPink,
+                        onPress: translate
+                    )
+                }
+                .frame(width: .infinity)
             }
-            .frame(width: .infinity)
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -69,12 +74,13 @@ struct TextBubble<Content: View>: View {
                 topTrailingRadius: radius,
                 style: .continuous
             )
-            .stroke(isUser ? Color.dustBlizzard : Color.dustPink, lineWidth: 4)
-            //            .fill(Color.dustPink)
+            .stroke(isUser ? Color.dustBlizzard : Color.dustPink, lineWidth: 8)
+            .fill(.white)
         )
         .padding(.horizontal, radius)
     }
 }
+
 
 #Preview {
     TextBubble(
