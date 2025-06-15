@@ -33,14 +33,16 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-    
-    static let Primary: Color = Color(red: 0, green: 0.76, blue: 0.94)
-        
-    static let TutorialColor: Color = Color(red: 0.86, green: 0.45, blue: 0.01)
 }
 
 
 // ADD Color pallete
 extension Color {
     static let crimson = Color(hex: "#DC143C")
+    static let candyFloss = Color(hex: "#EFA8E4")
+    static let cherryPearl = Color(hex: "#F8E1F4")
+    static let lynxWhite = Color(hex: "#F7F7F7")
+    static let blizzardBlue = Color(hex: "#97E5EF")
+    static let dustPink = Color(hex: "#923F9D")
+    static let dustBlizzard = Color(hex: "#3B7E96")
 }
