@@ -28,4 +28,5 @@ class Navigation: ObservableObject {
 enum Route: Hashable {
     case main
     case dialog
+    case dummy
 }
