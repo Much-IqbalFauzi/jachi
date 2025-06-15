@@ -12,51 +12,102 @@ struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
-    
+
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
     }
 
     var body: some View {
-        GeometryReader { reader in
-            VStack(alignment: .trailing) {
-                Spacer()
-                ScrollView {
-                    ForEach(vm.chat, id: \.self) { message in
-                        TextBubble(
-                            speaker: {},
-                            slow: {},
-                            translate: {},
-                            {
-                                Text(message)
-                                    .font(.system(size: 24))
-                                    .fontWeight(.semibold)
-                    //                .multilineTextAlignment(.leading)
-                    //                .foregroundColor(.candyFloss)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.blizzardBlue)
+        ZStack {
+            ChatBg()
+            Rectangle()
+                .fill(Color.dustBlizzard)
+                .opacity(0.3)
+            GeometryReader { reader in
+                VStack(alignment: .trailing) {
+                    Spacer()
+                    ScrollView {
+                        ForEach(
+                            Array(zip(vm.chatField.indices, vm.chatField)),
+                            id: \.0
+                        ) { index, conversation in
+                            let conv: ConvTalk = conversation
+                            HStack {
+                                if !conv.isUser {
+                                    Image(systemName: "person.fill")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.gray)
+                                }
+                                VStack {
+                                    if !conv.isUser {
+
+                                    }
+                                    HStack {
+                                        BorderedText(
+                                            conv.isUser ? "You" : "Auntie",
+                                            isUser: conv.isUser
+                                        )
+                                        .frame(
+                                            maxWidth: .infinity,
+                                            alignment: conv.isUser
+                                                ? .trailing : .leading)
+                                    }
+                                    .padding(.bottom, 4)
+                                    .padding(.horizontal, 16)
+                                    TextBubble(
+                                        isError: conv.isError,
+                                        isUser: conv.isUser,
+                                        speaker: {},
+                                        slow: {},
+                                        translate: {},
+                                        {
+                                            Text(conv.hanzi)
+                                                .font(.system(size: 24))
+                                                .fontWeight(.semibold)
+                                                .frame(
+                                                    maxWidth: .infinity,
+                                                    alignment: .leading)
+                                        })
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                        }.rotationEffect(Angle(degrees: 180))
+                    }
+                    .rotationEffect(Angle(degrees: -180))
+                    .frame(width: reader.size.width)
+                    .frame(maxHeight: reader.size.height)
+                    HStack {
+                        BtnCircular(
+                            icon: "microphone",
+                            action: {
+                                vm.tryAnswer()
                             })
-                    }.rotationEffect(Angle(degrees: 180))
-                }
-                .rotationEffect(Angle(degrees: -180))
-                .frame(width: reader.size.width)
-                .frame(maxHeight: reader.size.height / 1.75)
-                .background(.white)
-                HStack {
-                    BtnCircular(
-                        icon: "microphone",
-                        action: {
-                            vm.append("Ni Hao \(vm.chat.count + 1)")
-                        })
 
-                }
-                .frame(width: reader.size.width)
-                .background(.cyan)
+                        BtnCircular(
+                            icon: "microbe",
+                            action: {
+                                vm.rightAnswer()
+                            }
+                        )
+                        .padding(.leading, 16)
 
+                        BtnCircular(
+                            icon: "pencil",
+                            action: {
+                                vm.rightAnswer()
+                            }
+                        )
+                        .padding(.leading, 16)
+                    }
+                    .padding(.top, 32)
+                    .frame(width: reader.size.width)
+                    .background(Color.dustBlizzard)
+                }
+                .frame(width: reader.size.width, height: reader.size.height)
             }
-            .frame(width: reader.size.width, height: reader.size.height)
-        }.background(Color.blizzardBlue)
-
+        }
     }
 }
 

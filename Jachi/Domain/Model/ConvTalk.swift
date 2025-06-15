@@ -13,15 +13,19 @@ class ConvTalk {
     var pinyin: String
     var translate: String
     var highlight: String
+    var isUser: Bool
+    var isError: Bool
 
     init(
-        hanzi: String, pinyin: String, translate: String, highlight: String = ""
+        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false
     ) {
         self.id = UUID()
         self.hanzi = hanzi
         self.pinyin = pinyin
         self.translate = translate
         self.highlight = highlight
+        self.isUser = isUser
+        self.isError = isError
     }
 }
 
@@ -35,7 +39,7 @@ extension ConvTalk {
     static let talkUser1 = ConvTalk(
         hanzi: "你好，我要买一份牛肉丸", pinyin: "Nǐ hǎo, wǒ yào mǎi yí fèn niú ròu wán",
         translate: "Hello, I’d like to buy a portion of beef meatballs.",
-        highlight: "一份牛肉丸")
+        highlight: "一份牛肉丸", isUser: true)
     
     static let talkAuntie1 = ConvTalk(
         hanzi: "一份四十四块", pinyin: "Yí fèn sìshísì kuài",
@@ -45,7 +49,7 @@ extension ConvTalk {
     static let talkUser2 = ConvTalk(
         hanzi: "一公斤三十块？有促销吗？", pinyin: "Yì gōng jīn sānshí kuài? Yǒu cùxiāo ma?",
         translate: "Thirty yuan per kilogram? Is there a promotion?",
-        highlight: "有促销")
+        highlight: "有促销", isUser: true)
     
     static let talkAuntie2 = ConvTalk(
         hanzi: "要买几份？", pinyin: "Yào mǎi jǐ fèn?",
@@ -55,7 +59,7 @@ extension ConvTalk {
     static let talkUser3 = ConvTalk(
         hanzi: "两份八十块可以吗？", pinyin: "Liǎng fèn bāshí kuài kěyǐ ma?",
         translate: "Is eighty yuan for two portions okay?",
-        highlight: "两份八十")
+        highlight: "两份八十", isUser: true)
     
     static let talkAuntie3 = ConvTalk(
         hanzi: "三分七十块，我们的东西是精选的", pinyin: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de",
@@ -65,7 +69,7 @@ extension ConvTalk {
     static let talkUser4 = ConvTalk(
         hanzi: "好的阿姨，用微信支付可以吗？", pinyin: "Hǎo de āyí, yòng Wēixìn zhīfù kěyǐ ma?",
         translate: "Alright, auntie, can I pay with WeChat Pay?",
-        highlight: "用微信支付")
+        highlight: "用微信支付", isUser: true)
     
     static let talkAuntie4 = ConvTalk(
         hanzi: "可以", pinyin: "Kěyǐ",
@@ -75,5 +79,5 @@ extension ConvTalk {
     static let talkUser5 = ConvTalk(
         hanzi: "好的，这给您阿姨，谢谢", pinyin: "Hǎo de, zhè gěi nín āyí, xièxie",
         translate: "Alright, here you go, auntie. Thank you.",
-        highlight: "")
+        highlight: "", isUser: true)
 }
