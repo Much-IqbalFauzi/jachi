@@ -11,7 +11,11 @@ import SwiftUI
 struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
-    @StateObject private var vm: DialogViewmodel = .init()
+    @StateObject private var vm: DialogViewmodel
+    
+    init(topic: ConvTopic) {
+        _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
+    }
 
     var body: some View {
         GeometryReader { reader in
@@ -57,5 +61,5 @@ struct DialogScreen: View {
 }
 
 #Preview {
-    DialogScreen()
+    DialogScreen(topic: .topic1)
 }

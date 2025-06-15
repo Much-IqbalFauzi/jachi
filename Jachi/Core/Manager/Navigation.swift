@@ -27,6 +27,6 @@ class Navigation: ObservableObject {
 
 enum Route: Hashable {
     case main
-    case dialog
+    case dialog(topic: ConvTopic)
     case dummy
 }

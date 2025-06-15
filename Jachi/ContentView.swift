@@ -17,8 +17,8 @@ struct ContentView: View {
                     switch route {
                     case .main:
                         MainScreen()
-                    case .dialog:
-                        DialogScreen()
+                    case .dialog(let topic):
+                        DialogScreen(topic: topic)
                     case .dummy:
                         DummyScreen()
                     }

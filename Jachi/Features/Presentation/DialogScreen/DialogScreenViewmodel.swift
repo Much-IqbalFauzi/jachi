@@ -13,9 +13,16 @@ class DialogViewmodel: ObservableObject {
     
     @Published private(set) var chat: [String] = []
     
+    private var selectedTopic: ConvTopic
+    
+    init(topic: ConvTopic) {
+        self.selectedTopic = topic
+    }
+    
     func append(_ text: String) {
         chat.append(text)
     }
+    
 }
 
 

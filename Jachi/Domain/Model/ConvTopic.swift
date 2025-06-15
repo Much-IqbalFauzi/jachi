@@ -30,3 +30,13 @@ extension ConvTopic {
             .convo5
         ])
 }
+
+extension ConvTopic: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public static func == (lhs: ConvTopic, rhs: ConvTopic) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
