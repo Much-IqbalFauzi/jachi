@@ -15,7 +15,8 @@ struct ChatBg: View {
                 .scaledToFill()
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .clipped()
-                .blur(radius: 8)
+                .blur(radius: 4)
+                .opacity(0.5)
         }.ignoresSafeArea()
     }
 }
