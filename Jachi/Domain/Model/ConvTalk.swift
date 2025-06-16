@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ConvTalk {
     var id: UUID
@@ -15,9 +16,12 @@ class ConvTalk {
     var highlight: String
     var isUser: Bool
     var isError: Bool
+    var hanziView: any View
+    var pinYinView: any View
 
     init(
-        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false
+        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false,
+        hanziView: any View = Text(""), pinYinView: any View = Text("")
     ) {
         self.id = UUID()
         self.hanzi = hanzi
@@ -26,13 +30,15 @@ class ConvTalk {
         self.highlight = highlight
         self.isUser = isUser
         self.isError = isError
+        self.hanziView = hanziView
+        self.pinYinView = pinYinView
     }
 }
 
 extension ConvTalk {
 
     static let emptyTalk = ConvTalk(
-        hanzi: "", pinyin: "", translate: "", highlight: "")
+        hanzi: "...", pinyin: "...", translate: "...", highlight: "")
     
     // TODO: OUR List Pronounce
 

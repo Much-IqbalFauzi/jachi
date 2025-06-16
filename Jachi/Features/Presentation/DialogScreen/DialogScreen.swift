@@ -25,70 +25,112 @@ struct DialogScreen: View {
                 .opacity(0.3)
             GeometryReader { reader in
                 VStack(alignment: .trailing) {
-                    Spacer()
-                    ScrollView {
-                        ForEach(
-                            Array(zip(vm.chatField.indices, vm.chatField)),
-                            id: \.0
-                        ) { index, conversation in
-                            let conv: ConvTalk = conversation
-                            HStack {
-                                if !conv.isUser {
-                                    Image(systemName: "person.fill")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.gray)
-                                }
-                                VStack {
-                                    if !conv.isUser {
-
-                                    }
-                                    HStack {
-                                        BorderedText(
-                                            conv.isUser ? "You" : "Auntie",
-                                            isUser: conv.isUser
-                                        )
+                    HStack {
+                        Image("background")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 80)
+                        VStack {
+                            BorderedText("Auntie Jachi")
+                                .frame(
+                                    maxWidth: .infinity,
+                                    alignment: vm.questionn.isUser
+                                        ? .trailing : .leading
+                                )
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                            TextBubble(
+                                isError: vm.questionn.isError,
+                                isUser: vm.questionn.isUser,
+                                speaker: {},
+                                slow: {},
+                                translate: {},
+                                {
+                                    Text(vm.questionn.hanzi)
+                                        .font(.system(size: 24))
+                                        .fontWeight(.semibold)
                                         .frame(
                                             maxWidth: .infinity,
-                                            alignment: conv.isUser
-                                                ? .trailing : .leading)
+                                            alignment: .leading)
+                                    if (vm.questionn.hanzi != "...") {
+                                        Text(vm.questionn.hanzi)
+                                            .font(.system(size: 24))
+                                            .fontWeight(.semibold)
+                                            .frame(
+                                                maxWidth: .infinity,
+                                                alignment: .leading)
                                     }
-                                    .padding(.bottom, 4)
-                                    .padding(.horizontal, 16)
-                                    TextBubble(
-                                        isError: conv.isError,
-                                        isUser: conv.isUser,
-                                        speaker: {},
-                                        slow: {},
-                                        translate: {},
-                                        {
-                                            Text(conv.hanzi)
-                                                .font(.system(size: 24))
-                                                .fontWeight(.semibold)
-                                                .frame(
-                                                    maxWidth: .infinity,
-                                                    alignment: .leading)
-                                        })
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                        }.rotationEffect(Angle(degrees: 180))
+                                })
+                        }
                     }
-                    .rotationEffect(Angle(degrees: -180))
-                    .frame(width: reader.size.width)
-                    .frame(maxHeight: reader.size.height)
+                    .padding(.top, 56)
+                    Spacer()
+                    //                    ScrollView {
+                    //                        ForEach(
+                    //                            Array(zip(vm.chatField.indices, vm.chatField)),
+                    //                            id: \.0
+                    //                        ) { index, conversation in
+                    //                            let conv: ConvTalk = conversation
+                    //                            HStack {
+                    //                                if !conv.isUser {
+                    //                                    Image(systemName: "person.fill")
+                    //                                        .resizable()
+                    //                                        .frame(width: 30, height: 30)
+                    //                                        .foregroundColor(.gray)
+                    //                                }
+                    //                                VStack {
+                    //                                    if !conv.isUser {
+                    //
+                    //                                    }
+                    //                                    HStack {
+                    //                                        BorderedText(
+                    //                                            conv.isUser ? "You" : "Auntie",
+                    //                                            isUser: conv.isUser
+                    //                                        )
+                    //                                        .frame(
+                    //                                            maxWidth: .infinity,
+                    //                                            alignment: conv.isUser
+                    //                                                ? .trailing : .leading)
+                    //                                    }
+                    //                                    .padding(.bottom, 4)
+                    //                                    .padding(.horizontal, 16)
+                    //                                    TextBubble(
+                    //                                        isError: conv.isError,
+                    //                                        isUser: conv.isUser,
+                    //                                        speaker: {},
+                    //                                        slow: {},
+                    //                                        translate: {},
+                    //                                        {
+                    //                                            Text(conv.hanzi)
+                    //                                                .font(.system(size: 24))
+                    //                                                .fontWeight(.semibold)
+                    //                                                .frame(
+                    //                                                    maxWidth: .infinity,
+                    //                                                    alignment: .leading)
+                    //                                        })
+                    //                                }
+                    //                            }
+                    //                            .padding(.horizontal, 16)
+                    //                            .padding(.vertical, 8)
+                    //                        }.rotationEffect(Angle(degrees: 180))
+                    //                    }
+                    //                    .rotationEffect(Angle(degrees: -180))
+                    //                    .frame(width: reader.size.width)
+                    //                    .frame(maxHeight: reader.size.height)
+                    //                    .padding(.bottom, 16)
+
                     HStack {
                         BtnCircular(
                             icon: "microphone",
                             action: {
-                                vm.tryAnswer()
+                                //                                vm.tryAnswer()
                             })
 
                         BtnCircular(
                             icon: "microbe",
                             action: {
-                                vm.rightAnswer()
+                                //                                vm.rightAnswer()
                             }
                         )
                         .padding(.leading, 16)
@@ -96,7 +138,7 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "pencil",
                             action: {
-                                vm.rightAnswer()
+                                //                                vm.rightAnswer()
                             }
                         )
                         .padding(.leading, 16)
