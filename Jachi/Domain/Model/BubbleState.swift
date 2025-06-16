@@ -22,14 +22,17 @@ class BubbleState {
             self.primary = .dustBlizzard
             self.bg = .lynxWhite
         case .inactive:
-            self.primary = .dustBlizzard
-            self.bg = .lynxWhite
+            self.primary = .dustGray
+            self.bg = .smokeGray
         case .correct:
             self.primary = .dustBlizzard
             self.bg = .dustBlizzard
         case .incorrect:
             self.primary = .dustBlizzard
             self.bg = .dustBlizzard
+        case .activeAuntie:
+            self.primary = .dustPink
+            self.bg = .lynxWhite
         }
     }
 }
@@ -39,4 +42,5 @@ enum convTalkState {
     case inactive
     case correct
     case incorrect
+    case activeAuntie
 }

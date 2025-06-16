@@ -21,50 +21,70 @@ struct DialogScreen: View {
         ZStack {
             ChatBg()
             Rectangle()
-                .fill(Color.dustBlizzard)
+                .fill(Color.blizzardBlue)
                 .opacity(0.3)
+                .ignoresSafeArea()
             GeometryReader { reader in
                 VStack(alignment: .trailing) {
                     HStack {
-                        Image("background")
+                        Image("aunti")
                             .resizable()
                             .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 80)
+                            .frame(height: 10)
+                            .frame(width: 120)
+                            .padding(.leading, 16)
                         VStack {
                             BorderedText("Auntie Jachi")
                                 .frame(
                                     maxWidth: .infinity,
-                                    alignment: vm.questionn.isUser
-                                        ? .trailing : .leading
+                                    alignment: .leading
                                 )
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                             TextBubble(
-                                isError: vm.questionn.isError,
-                                isUser: vm.questionn.isUser,
+                                isError: vm.answer.isError,
+                                isUser: vm.answer.isUser,
                                 speaker: {},
                                 slow: {},
                                 translate: {},
                                 {
-                                    Text(vm.questionn.hanzi)
-                                        .font(.system(size: 24))
-                                        .fontWeight(.semibold)
-                                        .frame(
-                                            maxWidth: .infinity,
-                                            alignment: .leading)
-                                    if (vm.questionn.hanzi != "...") {
-                                        Text(vm.questionn.hanzi)
-                                            .font(.system(size: 24))
-                                            .fontWeight(.semibold)
-                                            .frame(
-                                                maxWidth: .infinity,
-                                                alignment: .leading)
+                                    vm.answer.buildHanzi(.dustPink)
+                                        .padding(.top, 8)
+                                        .padding(.bottom, 8)
+                                    if (vm.answer.hanzi != "...") {
+                                        vm.answer.buildPinyin(.dustPink)
+                                            .padding(.bottom, 8)
                                     }
                                 })
                         }
+                        .padding(.trailing, 8)
                     }
                     .padding(.top, 56)
+                    .padding(.bottom, 38)
+                    
+                    VStack {
+                        BorderedText("You", isUser: vm.questionn.isUser)
+                            .frame(
+                                maxWidth: .infinity,
+                                alignment: .trailing
+                            )
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                        TextBubble(
+                            isError: vm.questionn.isError,
+                            isUser: vm.questionn.isUser,
+                            speaker: {},
+                            slow: {},
+                            translate: {},
+                            {
+                                vm.questionn.buildHanzi()
+                                    .padding(.top, 8)
+                                    .padding(.bottom, 8)
+                                vm.questionn.buildPinyin()
+                                    .padding(.bottom, 8)
+                            })
+                    }
+                    .padding(.horizontal, 8)
                     Spacer()
                     //                    ScrollView {
                     //                        ForEach(
@@ -146,6 +166,7 @@ struct DialogScreen: View {
                     .padding(.top, 32)
                     .frame(width: reader.size.width)
                     .background(Color.dustBlizzard)
+//                    .ignoresSafeArea()
                 }
                 .frame(width: reader.size.width, height: reader.size.height)
             }
