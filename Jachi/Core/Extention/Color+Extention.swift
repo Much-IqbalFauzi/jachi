@@ -46,4 +46,8 @@ extension Color {
     static let dustPink = Color(hex: "#923F9D") // dark pink
     static let dustBlizzard = Color(hex: "#3B7E96") // dark blue
     static let autumnYellow = Color(hex: "#FDFAB3") // yellow
+    static let darkCyan = Color(hex:"154447") // dark cyan, lebih ke hijau gelap sih
+    static let lightGreen = Color(hex:"CFF5EA") //light green
+    static let darkGreen = Color(hex:"16484B") //dark green
+    static let gray = Color(hex:"ABABAB")
 }

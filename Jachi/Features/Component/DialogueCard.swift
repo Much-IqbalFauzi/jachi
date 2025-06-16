@@ -1,164 +1,160 @@
 import SwiftUI
 
 struct DialogueCardView: View {
+    let topic: ConvTopic
+    let topicIndex: Int
+    let onTap: () -> Void
     
-    @State private var textDialogue: String = "Lorem Ipsummm"
-    @State private var showDialogue: Bool = false
-    @State private var cardImage : Image? = nil
+    // Index Porgress, cuma buat awalan
+    private var progressValue: Double {
+        switch topicIndex {
+        case 0: return 0.5
+        case 1: return 0.0
+        case 2: return 0.0
+        default: return 0.0
+        }
+    }
     
-    let data : DialogueCardContent
+    // Menentukan nama gambar berdasarkan index
+    private var imageName: String {
+        switch topicIndex {
+        case 0: return "Image_Card"
+        case 1: return "Image_Card1"
+        case 2: return "Topic Image"
+        default: return "Image_Card"
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Main Card
             ZStack {
-                // Card Background with White Border
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(Color.white)
-                    .frame(width: 325, height: 154) // Slightly larger for border effect
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.darkGreen.opacity(1), lineWidth: 1)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.darkGreen)
+                    )
+                    .frame(width: 321, height: 120)
+                    .shadow(color: Color.gray, radius: 10, x: 2, y: 60)
+
                 
-                ZStack {
-                    // Full Image Background
-                    Image(data.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 321, height: 150)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 28))
+                VStack(spacing: 0) {
+                    // Image Section
+                    ZStack {
+                        Image(imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 321, height: 120)
+                            .clipped()
+                            .clipShape(
+                                UnevenRoundedRectangle(
+                                    topLeadingRadius: 20,
+                                    bottomLeadingRadius: 0,
+                                    bottomTrailingRadius: 0,
+                                    topTrailingRadius: 20
+                                )
+                            )
+                            //Border gambar
+                            .overlay(
+                                    UnevenRoundedRectangle(
+                                        topLeadingRadius: 20,
+                                        bottomLeadingRadius: 0,
+                                        bottomTrailingRadius: 0,
+                                        topTrailingRadius: 20
+                                    )
+                                    .stroke(Color.darkGreen.opacity(1), lineWidth: 1)
+                                )
+                    }
+                    .frame(height: 120)
                     
                     VStack(spacing: 0) {
-                        // Top section with completion badge
-                        HStack {
-                            // Completion Badge (only show if progress is 100%)
-                            if data.progressBarValue >= 1.0 {
-                                HStack {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(Color(hex : "#3BC0C8"))
-                                        .font(.system(size: 7.03))
-                                    Text("Completed")
-                                        .foregroundColor(Color(hex : "#3BC0C8"))
-                                        .font(.system(size: 7.03, weight: .medium))
+                        VStack(spacing: 4) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(topic.hanzi)
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 16, weight: .semibold))
+                                    Text(topic.name)
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 16, weight: .semibold))
+                                    
+                                    if progressValue >= 1.0 {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundColor(Color.lightGreen)
+                                                .font(.system(size: 15))
+                                            Text("Completed")
+                                                .foregroundColor(Color.lightGreen)
+                                                .font(.system(size: 15, weight: .medium))
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                                .foregroundColor(Color.lightGreen)
+                                                .font(.system(size: 15, weight: .semibold))
+                                        }
+                                        .padding(.top, 10)
+                                    }
                                 }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.8))
-                                )
-                            }
-                            Spacer()
-                        }
-                        .padding(.top, 12)
-                        .padding(.leading, 12)
-                        
-                        Spacer()
-                        
-                        // Text Overlay Section at Bottom
-                        ZStack {
-                            // Semi-transparent overlay
-                            Rectangle()
-                                .fill(Color(hex: "2D969C").opacity(0.9))
-                            
-                            VStack(spacing: 4) {
-                                Text(data.textDialogue)
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 16, weight: .medium))
                                 
-                                Text(data.englishTranslation ?? "")
-                                    .foregroundColor(.white.opacity(0.8))
-                                    .font(.system(size: 12, weight: .regular))
-                                    .italic()
+                                Spacer()
                             }
-                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 12)
                         }
-                        .frame(height: 50)
-                        .clipShape(
-                            UnevenRoundedRectangle(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: 28,
-                                bottomTrailingRadius: 28,
-                                topTrailingRadius: 0
-                            )
-                        )
+                        
+                        // Progress Bar Section (kalau belum 100%)
+                        if progressValue < 1.0 {
+                            HStack(spacing: 8) {
+                                ProgressView(value: progressValue)
+                                    .progressViewStyle(LinearProgressViewStyle())
+                                    .accentColor(Color.lightGreen)
+                                    .scaleEffect(x: 1, y: 3)
+                                
+                                Text("\(Int(progressValue * 100))%")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(Color.lightGreen)
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color.lightGreen)
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            .padding(.bottom, 12)
+                        } else {
+                            Spacer()
+                                .frame(height: 12)
+                        }
                     }
+                    .frame(width: 321, height: 120)
+                    .background(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 0,
+                            bottomLeadingRadius: 20,
+                            bottomTrailingRadius: 20,
+                            topTrailingRadius: 0
+                        )
+                        .fill(Color.darkGreen)
+                    )
                 }
-                .frame(width: 321, height: 150)
             }
-            
-            // Progress Bar Section
-            VStack(spacing: 10) {
-                HStack(spacing : 8) {
-                    ProgressView(value: data.progressBarValue)
-                        .progressViewStyle(LinearProgressViewStyle())
-                        .accentColor(Color(hex: "F5CDE6"))
-                        .scaleEffect(x: 1, y: 1.5)
-                    Text("\(Int(data.progressBarValue * 100))%")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(Color(hex: "FFFFFF"))
-                }
-                .padding(.horizontal, 40)
-            }
-            .frame(width: 321)
-            .padding(.top, 8)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 5)
+        .onTapGesture {
+            onTap()
+        }
     }
 }
-
-struct DialogueCardContent {
-    var imageName : String
-    var progressBarValue : Double
-    var textDialogue : String
-    var englishTranslation: String?
-    var isCompleted: Bool {
-        return progressBarValue >= 1.0
-    }
-}
-
-let dialogues : [DialogueCardContent] = [
-    DialogueCardContent(
-        imageName: "Topic Image",
-        progressBarValue: 0.79,
-        textDialogue: "买什么",
-        englishTranslation: "buying something"
-    ),
-    DialogueCardContent(
-        imageName: "Topic Image",
-        progressBarValue: 1.0,
-        textDialogue: "买什么",
-        englishTranslation: "buying something"
-    ),
-    DialogueCardContent(
-        imageName: "Topic Image",
-        progressBarValue: 0.6,
-        textDialogue: "你好",
-        englishTranslation: "hello"
-    ),
-    DialogueCardContent(
-        imageName: "Topic Image",
-        progressBarValue: 0.2,
-        textDialogue: "怎么买",
-        englishTranslation: "how to buy"
-    )
-]
 
 #Preview {
     VStack(spacing: 20) {
-        DialogueCardView(data: DialogueCardContent(
-            imageName: "Topic Image",
-            progressBarValue: 0.79,
-            textDialogue: "买什么",
-            englishTranslation: "buying something"
-        ))
+        DialogueCardView(
+            topic: .topic1,
+            topicIndex: 0,
+            onTap: { print("Topic 1 tapped") }
+        )
         
-        DialogueCardView(data: DialogueCardContent(
-            imageName: "Topic Image",
-            progressBarValue: 1.0,
-            textDialogue: "买什么",
-            englishTranslation: "buying something"
-        ))
+        DialogueCardView(
+            topic: .topic2,
+            topicIndex: 1,
+            onTap: { print("Topic 2 tapped") }
+        )
     }
-    .padding()
-    .background(Color(hex: "40C0CB"))
 }
