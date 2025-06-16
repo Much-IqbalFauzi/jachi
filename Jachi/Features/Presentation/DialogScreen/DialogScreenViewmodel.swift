@@ -27,11 +27,13 @@ class DialogViewmodel: ObservableObject {
     private var questionState: convTalkState = .inactive
     private var answerState: convTalkState = .inactive
     
-    @Published private(set) var questionColorState: Color = .dustPink
-    @Published private(set) var answerColorState: Color = .dustBlizzard
+    @Published private(set) var questionColorState: BubbleState = .init()
+    @Published private(set) var answerColorState: BubbleState = .init()
     
     init(topic: ConvTopic) {
         self.selectedTopic = topic
+        self.questionn = topic.dialogs[activeIndex].question
+        self.answer = topic.dialogs[activeIndex].answer
         
         chatField.append(topic.dialogs[activeIndex].question)
         
@@ -51,16 +53,13 @@ class DialogViewmodel: ObservableObject {
     }
     
     func changeQuestionState(convState: convTalkState = .inactive) {
-        switch convState {
-        case .active:
-            questionColorState = .dustPink
-        case .inactive:
-            questionColorState = .dustPink
-        case .correct:
-            questionColorState = .dustBlizzard
-        case .incorrect:
-            questionColorState = .dustBlizzard
-        }
+        questionColorState.toggleState(state: convState)
+        questionState = convState
+    }
+    
+    func changeAnswerState(convState: convTalkState = .inactive) {
+        answerColorState.toggleState(state: convState)
+        answerState = convState
     }
     
 }

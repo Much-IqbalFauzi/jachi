@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+struct TextItem {
+    var previx: String
+    var suffix: String
+    var highlight: String
+}
+
 class ConvTalk {
     var id: UUID
     var hanzi: String
@@ -16,12 +22,12 @@ class ConvTalk {
     var highlight: String
     var isUser: Bool
     var isError: Bool
-    var hanziView: any View
-    var pinYinView: any View
+    var hanziItem: TextItem
+    var pinYinItem: TextItem
 
     init(
         hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false,
-        hanziView: any View = Text(""), pinYinView: any View = Text("")
+        hanziItem: TextItem = TextItem(previx: "", suffix: "", highlight: ""), pinYinItem: TextItem = TextItem(previx: "", suffix: "", highlight: "")
     ) {
         self.id = UUID()
         self.hanzi = hanzi
@@ -30,8 +36,26 @@ class ConvTalk {
         self.highlight = highlight
         self.isUser = isUser
         self.isError = isError
-        self.hanziView = hanziView
-        self.pinYinView = pinYinView
+        self.hanziItem = hanziItem
+        self.pinYinItem = pinYinItem
+        
+    }
+    
+    func buildHanzi(_ color: Color = .dustBlizzard) -> some View {
+        buildTextComponent(item: hanziItem, color: color)
+    }
+    
+    func buildPinyin(_ color: Color = .dustBlizzard) -> some View {
+        buildTextComponent(item: pinYinItem, color: color)
+    }
+    
+    struct buildTextComponent: View {
+        var item: TextItem
+        var color: Color
+        
+        var body: some View {
+            Text("\(item.previx)\(Text(item.highlight).fontWeight(.bold).underline())\(item.suffix)").font(.system(size: 20)).foregroundStyle(color).fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 
@@ -48,8 +72,8 @@ extension ConvTalk {
         translate: "Hello, I want to buy one kilogram of snacks.",
         highlight: "一公斤零食",
         isUser: true,
-        hanziView: Text("你好，我要买\(Text("一公斤零食").bold())").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Nǐ hǎo, wǒ yào mǎi \(Text("yì gōng jīn líng shí").bold())")
+        hanziItem: TextItem(previx: "你好，我要买", suffix: "", highlight: "一公斤零食"),
+        pinYinItem: TextItem(previx: "Nǐ hǎo, wǒ yào mǎi ", suffix: "", highlight: "yì gōng jīn líng shí")
     )
     
     static let talkAuntie1 = ConvTalk(
@@ -57,8 +81,13 @@ extension ConvTalk {
         pinyin: "Yì gōng jīn sānshí kuài",
         translate: "One kilogram is thirty yuan.",
         highlight: "",
+<<<<<<< tasyaTest
         hanziView: Text("一公斤三十块"),
         pinYinView: Text("Yì gōng jīn sānshí kuài")
+=======
+        hanziItem: TextItem(previx: "一公斤三十块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Yì gōng jīn sānshí kuài", suffix: "", highlight: "")
+>>>>>>> development
     )
     
     static let talkUser2 = ConvTalk(
