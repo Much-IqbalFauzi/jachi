@@ -309,10 +309,10 @@ extension ConvTalk {
         hanzi: "好的，我要一份，谢谢 阿姨",
         pinyin: "Hǎo de, wǒ yào yí fèn, xièxie āyí",
         translate: "Alright, I'll take one portion. Thank you, auntie.",
-        highlight: "阿姨",
+        highlight: "谢谢 阿姨",
         isUser: true,
-        hanziItem: TextItem(previx: "好的，我要一份，谢谢 ", suffix: "", highlight: "阿姨"),
-        pinYinItem: TextItem(previx: "Hǎo de, wǒ yào yí fèn, xièxie ", suffix: "", highlight: "āyí")
+        hanziItem: TextItem(previx: "好的，我要一份，", suffix: "", highlight: "谢谢 阿姨"),
+        pinYinItem: TextItem(previx: "Hǎo de, wǒ yào yí fèn, ", suffix: "", highlight: "xièxie āyí")
     )
     
     static let talkAuntie14 = ConvTalk(
