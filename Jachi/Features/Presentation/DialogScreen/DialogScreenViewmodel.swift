@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 class DialogViewmodel: ObservableObject {
     @Published var title: String = "Dialogue De Umerto"
     
@@ -20,11 +21,18 @@ class DialogViewmodel: ObservableObject {
     
     private var selectedTopic: ConvTopic
     
+    @Published var questionn: ConvTalk = .emptyTalk
+    @Published var answer: ConvTalk = .emptyTalk
+    
+    private var questionState: convTalkState = .inactive
+    private var answerState: convTalkState = .inactive
+    
+    @Published private(set) var questionColorState: Color = .dustPink
+    @Published private(set) var answerColorState: Color = .dustBlizzard
+    
     init(topic: ConvTopic) {
         self.selectedTopic = topic
-//        if (activeIndex == 0 && topic.dialogs[activeIndex].question.highlight == "") {
-//            chatField.append(topic.dialogs[activeIndex].question)
-//        }
+        
         chatField.append(topic.dialogs[activeIndex].question)
         
     }
@@ -40,6 +48,19 @@ class DialogViewmodel: ObservableObject {
     func rightAnswer() {
         activeIndex += 1
         chatField.append(selectedTopic.dialogs[activeIndex].answer)
+    }
+    
+    func changeQuestionState(convState: convTalkState = .inactive) {
+        switch convState {
+        case .active:
+            questionColorState = .dustPink
+        case .inactive:
+            questionColorState = .dustPink
+        case .correct:
+            questionColorState = .dustBlizzard
+        case .incorrect:
+            questionColorState = .dustBlizzard
+        }
     }
     
 }

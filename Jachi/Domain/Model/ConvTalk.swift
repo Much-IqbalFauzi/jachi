@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ConvTalk {
     var id: UUID
@@ -15,9 +16,12 @@ class ConvTalk {
     var highlight: String
     var isUser: Bool
     var isError: Bool
+    var hanziView: any View
+    var pinYinView: any View
 
     init(
-        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false
+        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false,
+        hanziView: any View = Text(""), pinYinView: any View = Text("")
     ) {
         self.id = UUID()
         self.hanzi = hanzi
@@ -26,13 +30,15 @@ class ConvTalk {
         self.highlight = highlight
         self.isUser = isUser
         self.isError = isError
+        self.hanziView = hanziView
+        self.pinYinView = pinYinView
     }
 }
 
 extension ConvTalk {
 
     static let emptyTalk = ConvTalk(
-        hanzi: "", pinyin: "", translate: "", highlight: "")
+        hanzi: "...", pinyin: "...", translate: "...", highlight: "")
     
     // TODO: OUR List Pronounce
 
@@ -41,7 +47,10 @@ extension ConvTalk {
         pinyin: "Nǐ hǎo, wǒ yào mǎi yì gōng jīn líng shí",
         translate: "Hello, I want to buy one kilogram of snacks.",
         highlight: "一公斤零食",
-        isUser: true)
+        isUser: true,
+        hanziView: Text("你好，我要买\(Text("一公斤零食").bold())").foregroundColor(Color.blizzardBlue),
+        pinYinView: Text("Nǐ hǎo, wǒ yào mǎi \(Text("yì gōng jīn líng shí").bold())")
+    )
     
     static let talkAuntie1 = ConvTalk(
         hanzi: "一公斤三十块",

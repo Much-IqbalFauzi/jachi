@@ -38,16 +38,20 @@ extension Color {
 
 // ADD Color pallete
 extension Color {
-    static let crimson = Color(hex: "#DC143C")
+    static let crimson = Color(hex: "#DC143C") // red
     static let candyFloss = Color(hex: "#EFA8E4") // light pink
     static let cherryPearl = Color(hex: "#F8E1F4") // more more light pink
     static let lynxWhite = Color(hex: "#F7F7F7") // white
-    static let blizzardBlue = Color(hex: "#97E5EF") // light blue
+    static let blizzardBlue = Color(hex: "#92C5C7") // light blue
+    static let smokeBlue = Color(hex: "#CFF5EA") // super light blue
     static let dustPink = Color(hex: "#923F9D") // dark pink
-    static let dustBlizzard = Color(hex: "#3B7E96") // dark blue
+    static let dustBlizzard = Color(hex: "#16484B") // dark blue
     static let autumnYellow = Color(hex: "#FDFAB3") // yellow
     static let darkCyan = Color(hex:"154447") // dark cyan, lebih ke hijau gelap sih
     static let lightGreen = Color(hex:"CFF5EA") //light green
     static let darkGreen = Color(hex:"16484B") //dark green
     static let gray = Color(hex:"ABABAB")
+    static let dustAutumn = Color(hex: "#c2bc2f") // dark yellow
+    static let smokeGray = Color(hex: "#ADBCC8") // gray
+    static let dustGray = Color(hex: "#93A0AB") // gray
 }
