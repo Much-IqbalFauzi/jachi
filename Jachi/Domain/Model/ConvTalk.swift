@@ -47,7 +47,10 @@ extension ConvTalk {
         pinyin: "Nǐ hǎo, wǒ yào mǎi yì gōng jīn líng shí",
         translate: "Hello, I want to buy one kilogram of snacks.",
         highlight: "一公斤零食",
-        isUser: true)
+        isUser: true,
+        hanziView: Text("你好，我要买\(Text("一公斤零食").bold())").foregroundColor(Color.blizzardBlue),
+        pinYinView: Text("Nǐ hǎo, wǒ yào mǎi \(Text("yì gōng jīn líng shí").bold())")
+    )
     
     static let talkAuntie1 = ConvTalk(
         hanzi: "一公斤三十块",
