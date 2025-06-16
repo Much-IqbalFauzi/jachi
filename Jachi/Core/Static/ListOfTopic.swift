@@ -6,5 +6,9 @@
 //
 
 let listOfTopic: [ConvTopic] = [
-    .topic1
+    .topic1,
+    .topic2,
+    .topic3,
+    .topic4
 ]
+

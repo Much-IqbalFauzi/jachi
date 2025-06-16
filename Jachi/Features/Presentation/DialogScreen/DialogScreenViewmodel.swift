@@ -34,7 +34,7 @@ class DialogViewmodel: ObservableObject {
     }
     
     func tryAnswer() {
-        chatField.append(ConvTalk(hanzi: "Muehehe salah een", pinyin: "IYam Iyam Iyam", translate: "Buahaha", isError: true))
+        chatField.append(ConvTalk(hanzi: "Muehehe salah een", pinyin: "IYam Iyam Iyam", translate: "Buahaha", isError: true)) //, isError: true
     }
     
     func rightAnswer() {
