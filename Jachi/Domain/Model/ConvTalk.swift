@@ -81,13 +81,8 @@ extension ConvTalk {
         pinyin: "Yì gōng jīn sānshí kuài",
         translate: "One kilogram is thirty yuan.",
         highlight: "",
-<<<<<<< tasyaTest
-        hanziView: Text("一公斤三十块"),
-        pinYinView: Text("Yì gōng jīn sānshí kuài")
-=======
         hanziItem: TextItem(previx: "一公斤三十块", suffix: "", highlight: ""),
         pinYinItem: TextItem(previx: "Yì gōng jīn sānshí kuài", suffix: "", highlight: "")
->>>>>>> development
     )
     
     static let talkUser2 = ConvTalk(
@@ -96,8 +91,8 @@ extension ConvTalk {
         translate: "Thirty yuan per kilogram? Can I get a discount?",
         highlight: "可以打折",
         isUser: true,
-        hanziView: Text("一公斤三十块？\(Text("可以打折").bold())吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Yì gōng jīn sānshí kuài? \(Text("Kěyǐ dǎzhé").bold()) ma?")
+        hanziItem: TextItem(previx: "一公斤三十块？", suffix: "吗？", highlight: "可以打折"),
+        pinYinItem: TextItem(previx: "Yì gōng jīn sānshí kuài? ", suffix: " ma?", highlight: "Kěyǐ dǎzhé")
     )
     
     static let talkAuntie2 = ConvTalk(
@@ -105,8 +100,8 @@ extension ConvTalk {
         pinyin: "Yào mǎi jǐ fèn?",
         translate: "How many portions do you want to buy?",
         highlight: "",
-        hanziView: Text("要买几份？"),
-        pinYinView: Text("Yào mǎi jǐ fèn?")
+        hanziItem: TextItem(previx: "要买几份？", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Yào mǎi jǐ fèn?", suffix: "", highlight: "")
     )
     
     static let talkUser3 = ConvTalk(
@@ -115,8 +110,8 @@ extension ConvTalk {
         translate: "Is seventy yuan for three kilograms okay?",
         highlight: "三公斤七十",
         isUser: true,
-        hanziView: Text("\(Text("三公斤七十").bold())块可以吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("\(Text("Sān gōng jīn qīshí").bold()) kuài kěyǐ ma?")
+        hanziItem: TextItem(previx: "", suffix: "块可以吗？", highlight: "三公斤七十"),
+        pinYinItem: TextItem(previx: "", suffix: " kuài kěyǐ ma?", highlight: "Sān gōng jīn qīshí")
     )
     
     static let talkAuntie3 = ConvTalk(
@@ -124,8 +119,8 @@ extension ConvTalk {
         pinyin: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de",
         translate: "Three portions for seventy yuan — our products is carefully selected.",
         highlight: "",
-        hanziView: Text("三分七十块，我们的烤鸭是精选的"),
-        pinYinView: Text("Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de")
+        hanziItem: TextItem(previx: "三分七十块，我们的烤鸭是精选的", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de", suffix: "", highlight: "")
     )
     
     static let talkUser4 = ConvTalk(
@@ -134,8 +129,8 @@ extension ConvTalk {
         translate: "Alright, auntie, is it okay if I pay with cash?",
         highlight: "现金支付",
         isUser: true,
-        hanziView: Text("好的阿姨，\(Text("现金支付").bold())可以吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de āyí, \(Text("xiànjīn zhīfù").bold()) kěyǐ ma?")
+        hanziItem: TextItem(previx: "好的阿姨，", suffix: "可以吗？", highlight: "现金支付"),
+        pinYinItem: TextItem(previx: "Hǎo de āyí, ", suffix: " kěyǐ ma?", highlight: "xiànjīn zhīfù")
     )
     
     static let talkAuntie4 = ConvTalk(
@@ -143,8 +138,8 @@ extension ConvTalk {
         pinyin: "Kěyǐ",
         translate: "Yes.",
         highlight: "",
-        hanziView: Text("可以"),
-        pinYinView: Text("Kěyǐ")
+        hanziItem: TextItem(previx: "可以", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Kěyǐ", suffix: "", highlight: "")
     )
     
     static let talkUser5 = ConvTalk(
@@ -153,8 +148,8 @@ extension ConvTalk {
         translate: "Alright, here you go, auntie. Thank you.",
         highlight: "",
         isUser: true,
-        hanziView: Text("好的，这给您阿姨，谢谢").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de, zhè gěi nín āyí, xièxie")
+        hanziItem: TextItem(previx: "好的，这给您阿姨，谢谢", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Hǎo de, zhè gěi nín āyí, xièxie", suffix: "", highlight: "")
     )
     
     static let talkAuntie5 = ConvTalk(
@@ -162,8 +157,8 @@ extension ConvTalk {
         pinyin: "",
         translate: "",
         highlight: "",
-        hanziView: Text(""),
-        pinYinView: Text("")
+        hanziItem: TextItem(previx: "", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "", suffix: "", highlight: "")
     )
     
     
@@ -174,8 +169,8 @@ extension ConvTalk {
         translate: "Hello, I'd like to buy a portion of beef meatballs.",
         highlight: "一份牛肉丸",
         isUser: true,
-        hanziView: Text("你好，我要买\(Text("一份牛肉丸").bold())").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Nǐ hǎo, wǒ yào mǎi \(Text("yí fèn niú ròu wán").bold())")
+        hanziItem: TextItem(previx: "你好，我要买", suffix: "", highlight: "一份牛肉丸"),
+        pinYinItem: TextItem(previx: "Nǐ hǎo, wǒ yào mǎi ", suffix: "", highlight: "yí fèn niú ròu wán")
     )
     
     static let talkAuntie6 = ConvTalk(
@@ -183,8 +178,8 @@ extension ConvTalk {
         pinyin: "Yí fèn sìshísì kuài",
         translate: "One portion is forty-four yuan.",
         highlight: "",
-        hanziView: Text("一份四十四块"),
-        pinYinView: Text("Yí fèn sìshísì kuài")
+        hanziItem: TextItem(previx: "一份四十四块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Yí fèn sìshísì kuài", suffix: "", highlight: "")
     )
     
     static let talkUser7 = ConvTalk(
@@ -193,8 +188,8 @@ extension ConvTalk {
         translate: "Thirty yuan per kilogram? Is there a promotion?",
         highlight: "有促销",
         isUser: true,
-        hanziView: Text("一公斤三十块？\(Text("有促销").bold())吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Yì gōng jīn sānshí kuài? \(Text("Yǒu cùxiāo").bold()) ma?")
+        hanziItem: TextItem(previx: "一公斤三十块？", suffix: "吗？", highlight: "有促销"),
+        pinYinItem: TextItem(previx: "Yì gōng jīn sānshí kuài? ", suffix: " ma?", highlight: "Yǒu cùxiāo")
     )
     
     static let talkAuntie7 = ConvTalk(
@@ -202,8 +197,8 @@ extension ConvTalk {
         pinyin: "Yào mǎi jǐ fèn?",
         translate: "How many portions do you want to buy?",
         highlight: "",
-        hanziView: Text("要买几份？"),
-        pinYinView: Text("Yào mǎi jǐ fèn?")
+        hanziItem: TextItem(previx: "要买几份？", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Yào mǎi jǐ fèn?", suffix: "", highlight: "")
     )
     
     static let talkUser8 = ConvTalk(
@@ -212,8 +207,8 @@ extension ConvTalk {
         translate: "Is eighty yuan for two portions okay?",
         highlight: "两份八十",
         isUser: true,
-        hanziView: Text("\(Text("两份八十").bold())块可以吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("\(Text("Liǎng fèn bāshí").bold()) kuài kěyǐ ma?")
+        hanziItem: TextItem(previx: "", suffix: "块可以吗？", highlight: "两份八十"),
+        pinYinItem: TextItem(previx: "", suffix: " kuài kěyǐ ma?", highlight: "Liǎng fèn bāshí")
     )
     
     static let talkAuntie8 = ConvTalk(
@@ -221,8 +216,8 @@ extension ConvTalk {
         pinyin: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de",
         translate: "Three portions for seventy yuan — our products are carefully selected.",
         highlight: "",
-        hanziView: Text("三分七十块，我们的东西是精选的"),
-        pinYinView: Text("Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de")
+        hanziItem: TextItem(previx: "三分七十块，我们的东西是精选的", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de", suffix: "", highlight: "")
     )
     
     static let talkUser9 = ConvTalk(
@@ -231,16 +226,16 @@ extension ConvTalk {
         translate: "Alright, auntie, can I pay with WeChat Pay?",
         highlight: "用微信支付",
         isUser: true,
-        hanziView: Text("好的阿姨，\(Text("用微信支付").bold())可以吗？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de āyí, \(Text("yòng Wēixìn zhīfù").bold()) kěyǐ ma?")
+        hanziItem: TextItem(previx: "好的阿姨，", suffix: "可以吗？", highlight: "用微信支付"),
+        pinYinItem: TextItem(previx: "Hǎo de āyí, ", suffix: " kěyǐ ma?", highlight: "yòng Wēixìn zhīfù")
     )
     
     static let talkAuntie9 = ConvTalk(
         hanzi: "可以", pinyin: "Kěyǐ",
         translate: "Yes",
         highlight: "",
-        hanziView: Text("可以"),
-        pinYinView: Text("Kěyǐ")
+        hanziItem: TextItem(previx: "可以", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Kěyǐ", suffix: "", highlight: "")
     )
     
     static let talkUser10 = ConvTalk(
@@ -249,8 +244,8 @@ extension ConvTalk {
         translate: "Alright, here you go, auntie. Thank you.",
         highlight: "",
         isUser: true,
-        hanziView: Text("好的，这给您阿姨，谢谢").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de, zhè gěi nín āyí, xièxie")
+        hanziItem: TextItem(previx: "好的，这给您阿姨，谢谢", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Hǎo de, zhè gěi nín āyí, xièxie", suffix: "", highlight: "")
     )
     
     static let talkAuntie10 = ConvTalk(
@@ -258,8 +253,8 @@ extension ConvTalk {
         pinyin: "",
         translate: "",
         highlight: "",
-        hanziView: Text(""),
-        pinYinView: Text("")
+        hanziItem: TextItem(previx: "", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "", suffix: "", highlight: "")
     )
     
     // talkUser11 || talkAuntie11 -- talkAuntie14 || talkUser 14 convo2, topic1
@@ -268,8 +263,8 @@ extension ConvTalk {
         pinyin: "Nǐ hǎo! Xiǎng mǎi shénme?",
         translate: "Hello! What would you like to buy?",
         highlight: "你好",
-        hanziView: Text("\(Text("你好").bold())！想买什么？"),
-        pinYinView: Text("\(Text("Nǐ hǎo").bold())! Xiǎng mǎi shénme?")
+        hanziItem: TextItem(previx: "", suffix: "！想买什么？", highlight: "你好"),
+        pinYinItem: TextItem(previx: "", suffix: "! Xiǎng mǎi shénme?", highlight: "Nǐ hǎo")
     )
     
     static let talkUser11 = ConvTalk(
@@ -278,8 +273,8 @@ extension ConvTalk {
         translate: "I'd like to buy xiaolongbao, how much is it?",
         highlight: "小笼包",
         isUser: true,
-        hanziView: Text("我要买\(Text("小笼包").bold())，多少钱？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Wǒ yào mǎi \(Text("xiǎo lóng bāo").bold()), duōshǎo qián?")
+        hanziItem: TextItem(previx: "我要买", suffix: "，多少钱？", highlight: "小笼包"),
+        pinYinItem: TextItem(previx: "Wǒ yào mǎi ", suffix: ", duōshǎo qián?", highlight: "xiǎo lóng bāo")
     )
     
     static let talkAuntie12 = ConvTalk(
@@ -287,8 +282,8 @@ extension ConvTalk {
         pinyin: "Shísì kuài",
         translate: "Fourteen yuan.",
         highlight: "",
-        hanziView: Text("十四块"),
-        pinYinView: Text("Shísì kuài")
+        hanziItem: TextItem(previx: "十四块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Shísì kuài", suffix: "", highlight: "")
     )
     
     static let talkUser12 = ConvTalk(
@@ -297,8 +292,8 @@ extension ConvTalk {
         translate: "Thank you. If I buy two portions, how much would that be? I want to buy a few portions.",
         highlight: "谢谢",
         isUser: true,
-        hanziView: Text("\(Text("谢谢").bold())。 如果两份这个多少钱？我要买几份").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("\(Text("xiè xie").bold()). Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn")
+        hanziItem: TextItem(previx: "", suffix: "。 如果两份这个多少钱？我要买几份", highlight: "谢谢"),
+        pinYinItem: TextItem(previx: "", suffix: ". Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn", highlight: "xiè xie")
     )
     
     static let talkAuntie13 = ConvTalk(
@@ -306,8 +301,8 @@ extension ConvTalk {
         pinyin: "Shísì kuài yí fèn, liǎng fèn èrshíqī kuài",
         translate: "Fourteen yuan for one portion, twenty-seven yuan for two portions.",
         highlight: "",
-        hanziView: Text("十四块一份，两份二十七块"),
-        pinYinView: Text("Shísì kuài yí fèn, liǎng fèn èrshíqī kuài")
+        hanziItem: TextItem(previx: "十四块一份，两份二十七块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Shísì kuài yí fèn, liǎng fèn èrshíqī kuài", suffix: "", highlight: "")
     )
     
     static let talkUser13 = ConvTalk(
@@ -316,8 +311,8 @@ extension ConvTalk {
         translate: "Alright, I'll take one portion. Thank you, auntie.",
         highlight: "阿姨",
         isUser: true,
-        hanziView: Text("好的，我要一份，谢谢 \(Text("阿姨").bold())").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de, wǒ yào yí fèn, xièxie \(Text("āyí").bold())")
+        hanziItem: TextItem(previx: "好的，我要一份，谢谢 ", suffix: "", highlight: "阿姨"),
+        pinYinItem: TextItem(previx: "Hǎo de, wǒ yào yí fèn, xièxie ", suffix: "", highlight: "āyí")
     )
     
     static let talkAuntie14 = ConvTalk(
@@ -325,8 +320,8 @@ extension ConvTalk {
         pinyin: "Zhè gěi nǐ, méi shì!",
         translate: "Here you go. No problem!",
         highlight: "",
-        hanziView: Text("这给你，没事！"),
-        pinYinView: Text("Zhè gěi nǐ, méi shì!")
+        hanziItem: TextItem(previx: "这给你，没事！", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Zhè gěi nǐ, méi shì!", suffix: "", highlight: "")
     )
     
     static let talkUser14 = ConvTalk(
@@ -335,8 +330,8 @@ extension ConvTalk {
         translate: "",
         highlight: "",
         isUser: true,
-        hanziView: Text(""),
-        pinYinView: Text("")
+        hanziItem: TextItem(previx: "", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "", suffix: "", highlight: "")
     )
     
     // talkUser6 || talkAuntie6 -- talkAuntie10 || talkUser 10 convo2, topic2
@@ -345,8 +340,8 @@ extension ConvTalk {
         pinyin: "Nǐ hǎo! Xiǎng mǎi shénme?",
         translate: "Hello! What would you like to buy?",
         highlight: "",
-        hanziView: Text("你好！想买什么？"),
-        pinYinView: Text("Nǐ hǎo! Xiǎng mǎi shénme?")
+        hanziItem: TextItem(previx: "你好！想买什么？", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Nǐ hǎo! Xiǎng mǎi shénme?", suffix: "", highlight: "")
     )
     
     static let talkUser15 = ConvTalk(
@@ -355,8 +350,8 @@ extension ConvTalk {
         translate: "I'd like to buy noodles, how much is it?",
         highlight: "面条",
         isUser: true,
-        hanziView: Text("我要买\(Text("面条").bold())，多少钱？").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Wǒ yào mǎi \(Text("miàn tiáo").bold()), duōshǎo qián?")
+        hanziItem: TextItem(previx: "我要买", suffix: "，多少钱？", highlight: "面条"),
+        pinYinItem: TextItem(previx: "Wǒ yào mǎi ", suffix: ", duōshǎo qián?", highlight: "miàn tiáo")
     )
     
     static let talkAuntie16 = ConvTalk(
@@ -364,8 +359,8 @@ extension ConvTalk {
         pinyin: "Shísì kuài",
         translate: "Fourteen yuan.",
         highlight: "",
-        hanziView: Text("十四块"),
-        pinYinView: Text("Shísì kuài")
+        hanziItem: TextItem(previx: "十四块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Shísì kuài", suffix: "", highlight: "")
     )
     
     static let talkUser16 = ConvTalk(
@@ -374,8 +369,8 @@ extension ConvTalk {
         translate: "Thanks. If I buy two portions, how much would it be? I want to buy a few portions.",
         highlight: "感谢",
         isUser: true,
-        hanziView: Text("\(Text("感谢").bold()). 如果两份这个多少钱？我要买几份").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("\(Text("Gǎn xiè").bold()). Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn")
+        hanziItem: TextItem(previx: "", suffix: ". 如果两份这个多少钱？我要买几份", highlight: "感谢"),
+        pinYinItem: TextItem(previx: "", suffix: ". Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn", highlight: "Gǎn xiè")
     )
     
     static let talkAuntie17 = ConvTalk(
@@ -383,8 +378,8 @@ extension ConvTalk {
         pinyin: "Shísì kuài yí fèn, liǎng fèn èrshíqī kuài",
         translate: "Fourteen yuan for one portion, twenty-seven yuan for two portions.",
         highlight: "",
-        hanziView: Text("十四块一份，两份二十七块"),
-        pinYinView: Text("Shísì kuài yí fèn, liǎng fèn èrshíqī kuài")
+        hanziItem: TextItem(previx: "十四块一份，两份二十七块", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Shísì kuài yí fèn, liǎng fèn èrshíqī kuài", suffix: "", highlight: "")
     )
     
     static let talkUser17 = ConvTalk(
@@ -393,8 +388,8 @@ extension ConvTalk {
         translate: "Alright, I'll take one portion. Thank you, uncle.",
         highlight: "叔叔",
         isUser: true,
-        hanziView: Text("好的，我要一份，谢谢 \(Text("叔叔").bold())").foregroundColor(Color.blizzardBlue),
-        pinYinView: Text("Hǎo de, wǒ yào yí fèn, xièxie \(Text("shūshu").bold())")
+        hanziItem: TextItem(previx: "好的，我要一份，谢谢 ", suffix: "", highlight: "叔叔"),
+        pinYinItem: TextItem(previx: "Hǎo de, wǒ yào yí fèn, xièxie ", suffix: "", highlight: "shūshu")
     )
     
     static let talkAuntie18 = ConvTalk(
@@ -402,8 +397,8 @@ extension ConvTalk {
         pinyin: "Zhè gěi nǐ, méi shì!",
         translate: "Here you go. No problem!",
         highlight: "",
-        hanziView: Text("这给你，没事！"),
-        pinYinView: Text("Zhè gěi nǐ, méi shì!")
+        hanziItem: TextItem(previx: "这给你，没事！", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "Zhè gěi nǐ, méi shì!", suffix: "", highlight: "")
     )
     
     static let talkUser18 = ConvTalk(
@@ -412,7 +407,7 @@ extension ConvTalk {
         translate: "",
         highlight: "",
         isUser: true,
-        hanziView: Text(""),
-        pinYinView: Text("")
+        hanziItem: TextItem(previx: "", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "", suffix: "", highlight: "")
     )
 }
