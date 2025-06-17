@@ -54,7 +54,7 @@ class ConvTalk {
         var color: Color
         
         var body: some View {
-            Text("\(item.previx)\(Text(item.highlight).fontWeight(.bold).underline())\(item.suffix)").font(.system(size: 20)).foregroundStyle(color).fixedSize(horizontal: false, vertical: true)
+            Text("\(item.previx)\(Text(item.highlight).fontWeight(.bold).underline())\(item.suffix)").font(.system(size: 16)).foregroundStyle(color).fixedSize(horizontal: false, vertical: true)
         }
     }
 }

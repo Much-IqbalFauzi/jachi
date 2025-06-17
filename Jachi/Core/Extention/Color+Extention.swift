@@ -54,4 +54,6 @@ extension Color {
     static let dustAutumn = Color(hex: "#c2bc2f") // dark yellow
     static let smokeGray = Color(hex: "#ADBCC8") // gray
     static let dustGray = Color(hex: "#93A0AB") // gray
+    static let oceanBlue = Color(hex: "#1B3B5D")
+    static let smokeYellow = Color(hex: "#FFF8DB")
 }

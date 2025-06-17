@@ -20,7 +20,7 @@ struct Hint: View {
             .font(.system(size: 16, weight: .semibold))
             .padding(.horizontal, 24)
             .padding(.vertical, 8)
-            .background(Color.lynxWhite)
+            .background(Color.smokeYellow)
             .cornerRadius(16)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
