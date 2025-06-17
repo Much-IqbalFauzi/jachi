@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUI
 
+enum auntieState {
+    case idle
+    case waiting
+    case answering
+}
 
 class DialogViewmodel: ObservableObject {
     @Published var title: String = "Dialogue De Umerto"
@@ -27,8 +32,6 @@ class DialogViewmodel: ObservableObject {
     private var questionState: convTalkState = .inactive
     private var answerState: convTalkState = .inactive
     
-    @Published private(set) var questionColorState: BubbleState = .init()
-    @Published private(set) var answerColorState: BubbleState = .init()
     
     init(topic: ConvTopic) {
         self.selectedTopic = topic
@@ -36,7 +39,6 @@ class DialogViewmodel: ObservableObject {
         self.answer = topic.dialogs[activeIndex].answer
         
         chatField.append(topic.dialogs[activeIndex].question)
-        
     }
     
     func append(_ text: String) {
@@ -52,16 +54,20 @@ class DialogViewmodel: ObservableObject {
         chatField.append(selectedTopic.dialogs[activeIndex].answer)
     }
     
-    func changeQuestionState(convState: convTalkState = .inactive) {
-        questionColorState.toggleState(state: convState)
-        questionState = convState
+    func nextQuestion() {
+        activeIndex += 1
     }
     
-    func changeAnswerState(convState: convTalkState = .inactive) {
-        answerColorState.toggleState(state: convState)
-        answerState = convState
+    func toggleChangeAuntieState(auntyState: auntieState) {
+        switch auntyState {
+        case .idle:
+            break
+        case .waiting:
+            break
+        case .answering:
+            break
+        }
     }
-    
 }
 
 

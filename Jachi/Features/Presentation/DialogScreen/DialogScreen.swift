@@ -12,9 +12,15 @@ struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
-
+    
+    @StateObject private var userBubble: BubbleState = .init()
+    @StateObject private var botBubble: BubbleState = .init(primary: .dustPink, bg: .lynxWhite)
+    
+    @StateObject private var botChibi: ChibiState = .init()
+    
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
+        
     }
 
     var body: some View {
@@ -27,14 +33,25 @@ struct DialogScreen: View {
             GeometryReader { reader in
                 VStack(alignment: .trailing) {
                     HStack {
-                        Image("aunti")
+                        Image(botChibi.state)
                             .resizable()
                             .scaledToFill()
                             .frame(height: 10)
                             .frame(width: 120)
                             .padding(.leading, 16)
                         VStack {
-                            BorderedText("Auntie Jachi")
+                            Text("Auntie Jachi")
+                                .font(.system(size: 16, weight: .semibold))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .foregroundColor(Color(botBubble.primary))
+                                .background(Color(botBubble.bg))
+                                .cornerRadius(16)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color(botBubble.primary), lineWidth: 4)
+                                }
+//                            BorderedText("Auntie Jachi", bubbleState: botBubble)
                                 .frame(
                                     maxWidth: .infinity,
                                     alignment: .leading
@@ -42,17 +59,18 @@ struct DialogScreen: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
                             TextBubble(
+                                bubbleState: botBubble,
                                 isError: vm.answer.isError,
                                 isUser: vm.answer.isUser,
                                 speaker: {},
                                 slow: {},
                                 translate: {},
                                 {
-                                    vm.answer.buildHanzi(.dustPink)
+                                    vm.answer.buildHanzi(botBubble.primary)
                                         .padding(.top, 8)
                                         .padding(.bottom, 8)
-                                    if (vm.answer.hanzi != "...") {
-                                        vm.answer.buildPinyin(.dustPink)
+                                    if vm.answer.hanzi != "..." {
+                                        vm.answer.buildPinyin(botBubble.primary)
                                             .padding(.bottom, 8)
                                     }
                                 })
@@ -61,31 +79,51 @@ struct DialogScreen: View {
                     }
                     .padding(.top, 56)
                     .padding(.bottom, 38)
-                    
+
                     VStack {
-                        BorderedText("You", isUser: vm.questionn.isUser)
-                            .frame(
-                                maxWidth: .infinity,
-                                alignment: .trailing
-                            )
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                        HStack {
+                            Text("You")
+                                .font(.system(size: 16, weight: .semibold))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .foregroundColor(Color(userBubble.primary))
+                                .background(Color(userBubble.bg))
+                                .cornerRadius(16)
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color(userBubble.primary), lineWidth: 4)
+                                }
+//                            BorderedText("You", bubbleState: userBubble)
+                                .frame(
+                                    maxWidth: .infinity,
+                                    alignment: .trailing
+                                )
+                                .padding(.horizontal, 16)
+                            Image("persona")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 44, height: 44)
+                                .padding(.trailing, 16)
+                        }
+                        .padding(.vertical, 8)
                         TextBubble(
+                            bubbleState: userBubble,
                             isError: vm.questionn.isError,
                             isUser: vm.questionn.isUser,
                             speaker: {},
                             slow: {},
                             translate: {},
                             {
-                                vm.questionn.buildHanzi()
+                                vm.questionn.buildHanzi(userBubble.primary)
                                     .padding(.top, 8)
                                     .padding(.bottom, 8)
-                                vm.questionn.buildPinyin()
+                                vm.questionn.buildPinyin(userBubble.primary)
                                     .padding(.bottom, 8)
                             })
                     }
                     .padding(.horizontal, 8)
                     Spacer()
+                    
                     //                    ScrollView {
                     //                        ForEach(
                     //                            Array(zip(vm.chatField.indices, vm.chatField)),
@@ -144,13 +182,18 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "microphone",
                             action: {
-                                //                                vm.tryAnswer()
+//                                vm.changeAnswerState(convState: .inactive)
+//                                print("Microphone tapped")
+                                changeBotState(.inactive)
+                                changeUserState(.active)
                             })
 
                         BtnCircular(
                             icon: "microbe",
                             action: {
-                                //                                vm.rightAnswer()
+//                                vm.getCurrentColorState()
+                                changeBotState(.activeAuntie)
+                                changeUserState(.inactive)
                             }
                         )
                         .padding(.leading, 16)
@@ -158,21 +201,36 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "pencil",
                             action: {
-                                //                                vm.rightAnswer()
+//                                vm.changeAnswerState(convState: .activeAuntie)
+                                
+                                botChibi.changeState(.smile)
                             }
                         )
                         .padding(.leading, 16)
                     }
-                    .padding(.top, 32)
+                    .padding(.top, 24)
                     .frame(width: reader.size.width)
                     .background(Color.dustBlizzard)
-//                    .ignoresSafeArea()
+                    //                    .ignoresSafeArea()
                 }
                 .frame(width: reader.size.width, height: reader.size.height)
             }
         }
     }
+    
+    private func changeUserState(_ state: convTalkState) {
+        userBubble.toggleState(state: state)
+        
+        
+    }
+    
+    private func changeBotState(_ state: convTalkState) {
+        botBubble.toggleState(state: state)
+        
+        botChibi.toggleactive()
+    }
 }
+
 
 #Preview {
     DialogScreen(topic: .topic1)

@@ -6,14 +6,23 @@
 //
 
 import SwiftUI
+import Foundation
 
-class BubbleState {
-    var primary: Color
-    var bg: Color
+class BubbleState: ObservableObject {
+    @Published private(set) var primary: Color
+    @Published private(set) var bg: Color
+    @Published private(set) var isActive: Bool
     
     init() {
         self.primary = .dustBlizzard
         self.bg = .lynxWhite
+        self.isActive = true
+    }
+    
+    init (primary: Color, bg: Color) {
+        self.primary = primary
+        self.bg = bg
+        self.isActive = true
     }
     
     func toggleState(state: convTalkState) {
@@ -21,18 +30,23 @@ class BubbleState {
         case .active:
             self.primary = .dustBlizzard
             self.bg = .lynxWhite
+            self.isActive = true
         case .inactive:
             self.primary = .dustGray
             self.bg = .smokeGray
+            self.isActive = false
         case .correct:
             self.primary = .dustBlizzard
-            self.bg = .dustBlizzard
+            self.bg = .lynxWhite
+            self.isActive = true
         case .incorrect:
-            self.primary = .dustBlizzard
-            self.bg = .dustBlizzard
+            self.primary = .crimson
+            self.bg = .candyFloss
+            self.isActive = true
         case .activeAuntie:
             self.primary = .dustPink
             self.bg = .lynxWhite
+            self.isActive = false
         }
     }
 }
