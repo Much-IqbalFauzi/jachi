@@ -19,7 +19,8 @@ struct ContentView: View {
                         MainScreen()
                     case .dialog(let topic):
                         DialogScreen(topic: topic)
-                            .toolbarBackground(.hidden, for: .navigationBar)
+                            .navigationBarBackButtonHidden(true)
+                            .navigationTitle(topic.name)
                     case .dummy:
                         DummyScreen()
                     }
