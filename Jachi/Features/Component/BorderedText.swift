@@ -9,11 +9,11 @@ import SwiftUI
 
 struct BorderedText: View {
     private var text: String
-    private var isUser: Bool
+    private var bubbleState: BubbleState
     
-    init(_ text: String, isUser: Bool = false) {
+    init(_ text: String, bubbleState: BubbleState) {
         self.text = text
-        self.isUser = isUser
+        self.bubbleState = bubbleState
     }
     
     var body: some View {
@@ -21,11 +21,12 @@ struct BorderedText: View {
             .font(.system(size: 16, weight: .semibold))
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(Color.lynxWhite)
+            .foregroundColor(Color(bubbleState.primary))
+            .background(Color(bubbleState.bg))
             .cornerRadius(16)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(isUser ? Color.dustBlizzard : Color.dustPink, lineWidth: 4)
+                    .stroke(Color(bubbleState.primary), lineWidth: 4)
             }
     }
 }

@@ -16,8 +16,10 @@ struct TextBubble<Content: View>: View {
     private var slow: () -> Void
     private var translate: () -> Void
     private var isError: Bool
+    private var bubbleState: BubbleState
 
     init(
+        bubbleState: BubbleState = .init(),
         isError: Bool = false,
         radius: CGFloat = 16,
         isUser: Bool = true,
@@ -33,6 +35,7 @@ struct TextBubble<Content: View>: View {
         self.slow = slow
         self.translate = translate
         self.isError = isError
+        self.bubbleState = bubbleState
     }
 
     var body: some View {
@@ -40,32 +43,30 @@ struct TextBubble<Content: View>: View {
             content()
             if (!isError) {
                 Rectangle()
-                    .frame(width: .infinity, height: 1)
-                    .foregroundColor(isUser ? .dustBlizzard : .dustPink)
+                    .frame(height: 1)
+                    .foregroundColor(bubbleState.primary)
                 HStack {
                     PressableIcon(
                         icon: "speaker.wave.2",
-                        color: isUser ? .dustBlizzard : .dustPink,
+                        color: bubbleState.primary,
                         onPress: speaker
                     )
                     PressableIcon(
                         icon: "tortoise",
-                        color: isUser ? .dustBlizzard : .dustPink,
+                        color: bubbleState.primary,
                         onPress: slow
                     )
                     .padding(.horizontal, 10)
                     PressableIcon(
                         icon: "translate",
-                        color: isUser ? .dustBlizzard : .dustPink,
+                        color: bubbleState.primary,
                         onPress: translate
                     )
                 }
-                .frame(width: .infinity)
             }
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .foregroundColor(.black)
         .background(
             UnevenRoundedRectangle(
                 topLeadingRadius: radius,
@@ -74,8 +75,8 @@ struct TextBubble<Content: View>: View {
                 topTrailingRadius: radius,
                 style: .continuous
             )
-            .stroke(isUser ? Color.dustBlizzard : Color.dustPink, lineWidth: 8)
-            .fill(.white)
+            .stroke(bubbleState.primary, lineWidth: 8)
+            .fill(bubbleState.bg)
         )
         .padding(.horizontal, radius)
     }
