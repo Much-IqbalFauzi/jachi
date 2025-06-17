@@ -7,6 +7,12 @@ struct MainScreen: View {
     @State private var streakText: String = "5"
 
     var body: some View {
+        Button {
+            navigation.navigate(to: .dummy)
+        } label: {
+            Text("Dummy Button")
+        }
+
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 Image("Background")

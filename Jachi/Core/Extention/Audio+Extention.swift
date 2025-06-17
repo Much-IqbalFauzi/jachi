@@ -6,7 +6,7 @@
 //
 
 import AVFoundation
-
+#if os(iOS)
 extension AVAudioSession {
     static func requestRecordPermission() async -> Bool {
         await withCheckedContinuation { continuation in
@@ -16,3 +16,4 @@ extension AVAudioSession {
         }
     }
 }
+#endif
