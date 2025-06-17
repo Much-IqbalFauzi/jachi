@@ -66,6 +66,7 @@ extension ConvTalk {
     
     // TODO: OUR List Pronounce
 
+        // yang ini
     static let talkUser1 = ConvTalk(
         hanzi: "你好，我要买一公斤零食",
         pinyin: "Nǐ hǎo, wǒ yào mǎi yì gōng jīn líng shí",
@@ -258,6 +259,7 @@ extension ConvTalk {
     )
     
     // talkUser11 || talkAuntie11 -- talkAuntie14 || talkUser 14 convo2, topic1
+    // yang ini
     static let talkAuntie11 = ConvTalk(
         hanzi: "你好！想买什么？",
         pinyin: "Nǐ hǎo! Xiǎng mǎi shénme?",

@@ -24,7 +24,7 @@ class ConvTopic {
 extension ConvTopic {
     static let topic1 = ConvTopic(
         name: "Can i get a discount?",
-        hanzi: "可以打折吗",
+        hanzi: "可以打折吗", //keyidazhe
         dialog: [
             .convo1,
             .convo2,
