@@ -9,13 +9,14 @@ import SwiftUI
 
 struct BtnCircular: View {
     var icon: String
+    var fill: Color = .dustBlizzard
+    var color: Color = .whiteGreen
     var action: () -> Void = {}
-    var color: Color = .dustBlizzard
     
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
-                .foregroundColor(.lynxWhite)
+                .foregroundColor(fill)
                 .font(.system(size: 32, weight: .semibold))
         }
         .frame(width: 56, height: 56)
@@ -23,7 +24,7 @@ struct BtnCircular: View {
         .clipShape(Circle())
         .background(
             RoundedRectangle(cornerRadius: 36, style: .circular)
-                .stroke(Color.blizzardBlue, lineWidth: 12)
+                .stroke(Color.smokeBlue, lineWidth: 12)
         )
     }
 }
