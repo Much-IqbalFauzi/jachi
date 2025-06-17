@@ -23,7 +23,7 @@ class ChibiState: ObservableObject {
         }
     }
     
-    func toggleactive() {
+    func toggleActive() {
         isActive.toggle()
         changeState(stateValue)
     }

@@ -12,26 +12,41 @@ struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
-    
+
     @StateObject private var userBubble: BubbleState = .init()
-    @StateObject private var botBubble: BubbleState = .init(primary: .dustPink, bg: .lynxWhite)
-    
+    @StateObject private var botBubble: BubbleState = .init(
+        primary: .dustPink, bg: .lynxWhite)
+
     @StateObject private var botChibi: ChibiState = .init()
-    
+
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
-        
     }
 
     var body: some View {
         ZStack {
             ChatBg()
             Rectangle()
-                .fill(Color.blizzardBlue)
-                .opacity(0.3)
+                .fill(Color.dustBlizzard)
+                .opacity(0.4)
                 .ignoresSafeArea()
             GeometryReader { reader in
                 VStack(alignment: .trailing) {
+                    VStack(alignment: .center) {
+                        ProgressView(
+                            value: 0.3,
+                            label: {},
+                            currentValueLabel: {
+                                Text("\(vm.progressFormatting())").padding(
+                                    .top, -30)
+                            }
+                        )
+                        .progressViewStyle(Progress())
+                    }
+                    .padding(.bottom, 16)
+                    .padding(.horizontal, 16)
+                    .frame(width: reader.size.width)
+
                     HStack {
                         Image(botChibi.state)
                             .resizable()
@@ -49,9 +64,11 @@ struct DialogScreen: View {
                                 .cornerRadius(16)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color(botBubble.primary), lineWidth: 4)
+                                        .stroke(
+                                            Color(botBubble.primary),
+                                            lineWidth: 4)
                                 }
-//                            BorderedText("Auntie Jachi", bubbleState: botBubble)
+                                //                            BorderedText("Auntie Jachi", bubbleState: botBubble)
                                 .frame(
                                     maxWidth: .infinity,
                                     alignment: .leading
@@ -91,7 +108,9 @@ struct DialogScreen: View {
                                 .cornerRadius(16)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color(userBubble.primary), lineWidth: 4)
+                                        .stroke(
+                                            Color(userBubble.primary),
+                                            lineWidth: 4)
                                 }
 //                            BorderedText("You", bubbleState: userBubble)
                                 .frame(
@@ -99,11 +118,14 @@ struct DialogScreen: View {
                                     alignment: .trailing
                                 )
                                 .padding(.horizontal, 16)
-                            Image("persona")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 44, height: 44)
-                                .padding(.trailing, 16)
+                            Image(
+                                userBubble.isActive
+                                    ? "persona" : "persona-disable"
+                            )
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 44, height: 44)
+                            .padding(.trailing, 16)
                         }
                         .padding(.vertical, 8)
                         TextBubble(
@@ -122,68 +144,21 @@ struct DialogScreen: View {
                             })
                     }
                     .padding(.horizontal, 8)
-                    Spacer()
-                    
-                    //                    ScrollView {
-                    //                        ForEach(
-                    //                            Array(zip(vm.chatField.indices, vm.chatField)),
-                    //                            id: \.0
-                    //                        ) { index, conversation in
-                    //                            let conv: ConvTalk = conversation
-                    //                            HStack {
-                    //                                if !conv.isUser {
-                    //                                    Image(systemName: "person.fill")
-                    //                                        .resizable()
-                    //                                        .frame(width: 30, height: 30)
-                    //                                        .foregroundColor(.gray)
-                    //                                }
-                    //                                VStack {
-                    //                                    if !conv.isUser {
-                    //
-                    //                                    }
-                    //                                    HStack {
-                    //                                        BorderedText(
-                    //                                            conv.isUser ? "You" : "Auntie",
-                    //                                            isUser: conv.isUser
-                    //                                        )
-                    //                                        .frame(
-                    //                                            maxWidth: .infinity,
-                    //                                            alignment: conv.isUser
-                    //                                                ? .trailing : .leading)
-                    //                                    }
-                    //                                    .padding(.bottom, 4)
-                    //                                    .padding(.horizontal, 16)
-                    //                                    TextBubble(
-                    //                                        isError: conv.isError,
-                    //                                        isUser: conv.isUser,
-                    //                                        speaker: {},
-                    //                                        slow: {},
-                    //                                        translate: {},
-                    //                                        {
-                    //                                            Text(conv.hanzi)
-                    //                                                .font(.system(size: 24))
-                    //                                                .fontWeight(.semibold)
-                    //                                                .frame(
-                    //                                                    maxWidth: .infinity,
-                    //                                                    alignment: .leading)
-                    //                                        })
-                    //                                }
-                    //                            }
-                    //                            .padding(.horizontal, 16)
-                    //                            .padding(.vertical, 8)
-                    //                        }.rotationEffect(Angle(degrees: 180))
-                    //                    }
-                    //                    .rotationEffect(Angle(degrees: -180))
-                    //                    .frame(width: reader.size.width)
-                    //                    .frame(maxHeight: reader.size.height)
-                    //                    .padding(.bottom, 16)
 
+                    Hint("Hero za warudo")
+                        .frame(
+                            maxWidth: .infinity,
+                            alignment: .center
+                        )
+                        .padding()
+
+                    Spacer()
                     HStack {
                         BtnCircular(
                             icon: "microphone",
                             action: {
-//                                vm.changeAnswerState(convState: .inactive)
-//                                print("Microphone tapped")
+                                //                                vm.changeAnswerState(convState: .inactive)
+                                //                                print("Microphone tapped")
                                 changeBotState(.inactive)
                                 changeUserState(.active)
                             })
@@ -191,7 +166,7 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "microbe",
                             action: {
-//                                vm.getCurrentColorState()
+                                //                                vm.getCurrentColorState()
                                 changeBotState(.activeAuntie)
                                 changeUserState(.inactive)
                             }
@@ -201,8 +176,8 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "pencil",
                             action: {
-//                                vm.changeAnswerState(convState: .activeAuntie)
-                                
+                                //                                vm.changeAnswerState(convState: .activeAuntie)
+
                                 botChibi.changeState(.smile)
                             }
                         )
@@ -217,20 +192,18 @@ struct DialogScreen: View {
             }
         }
     }
-    
+
     private func changeUserState(_ state: convTalkState) {
         userBubble.toggleState(state: state)
-        
-        
+
     }
-    
+
     private func changeBotState(_ state: convTalkState) {
         botBubble.toggleState(state: state)
-        
-        botChibi.toggleactive()
+
+        botChibi.toggleActive()
     }
 }
-
 
 #Preview {
     DialogScreen(topic: .topic1)

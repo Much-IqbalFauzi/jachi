@@ -41,6 +41,14 @@ class DialogViewmodel: ObservableObject {
         chatField.append(topic.dialogs[activeIndex].question)
     }
     
+    func getActiveIndex() -> Int {
+        return activeIndex + 1
+    }
+    
+    func progressFormatting() -> String {
+        return "\(getActiveIndex())/\(selectedTopic.dialogs.count)"
+    }
+    
     func append(_ text: String) {
         chat.append(text)
     }
