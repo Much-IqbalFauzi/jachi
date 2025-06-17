@@ -12,6 +12,8 @@ struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
+    
+    @StateObject private var recognizer = SpeechRecognizer()
 
     @StateObject private var userBubble: BubbleState = .init()
     @StateObject private var botBubble: BubbleState = .init(
@@ -160,28 +162,14 @@ struct DialogScreen: View {
                     Spacer()
                     HStack {
                         BtnCircular(
-                            icon: "microphone",
+                            icon: vm.isRecording ? "pause.fill": "microphone.fill",
+                            fill: .dustBlizzard,
                             action: {
-                                changeBotState(.inactive)
-                                changeUserState(.active)
+                                self.toggleRecording()
+//                                changeBotState(.inactive)
+//                                changeUserState(.active)
+                                
                             })
-
-                        BtnCircular(
-                            icon: "microbe",
-                            action: {
-                                changeBotState(.activeAuntie)
-                                changeUserState(.inactive)
-                            }
-                        )
-                        .padding(.leading, 16)
-
-                        BtnCircular(
-                            icon: "pencil",
-                            action: {
-                                botChibi.changeState(.smile)
-                            }
-                        )
-                        .padding(.leading, 16)
                     }
                     .padding(.top, 24)
                     .frame(width: reader.size.width)
@@ -202,6 +190,41 @@ struct DialogScreen: View {
         botBubble.toggleState(state: state)
 
         botChibi.toggleActive()
+    }
+    
+    private func toggleRecording() {
+        let userTalk = vm.questionn
+        
+        if !vm.isRecording {
+            let result = vm.stopRecordingReal(
+                target: vm.questionn.highlight,
+                duration: 2.0
+            )
+            
+            print("the result is \(result)")
+            
+            if result > 0 && result < 101 {
+                moveToNextDialogue()
+            }
+        } else {
+            vm.startRecordingReal(
+                beforeTarget: userTalk.wordPrevix,
+                target: userTalk.highlight,
+                duration: 2.0
+            )
+            vm.resultCode = -1
+            vm.originalAudioDuration = 0
+            vm.predictedClass = ""
+        }
+        vm.isRecording.toggle()
+    }
+
+    private func moveToNextDialogue() {
+        if vm.checkDialogMax() {
+            vm.nextQuestion()
+        } else {
+            print("Do something")
+        }
     }
 }
 

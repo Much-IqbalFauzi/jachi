@@ -56,12 +56,12 @@ struct TextBubble<Content: View>: View {
                         color: bubbleState.primary,
                         onPress: slow
                     )
-                    .padding(.horizontal, 10)
-                    PressableIcon(
-                        icon: "translate",
-                        color: bubbleState.primary,
-                        onPress: translate
-                    )
+                    .padding(.leading, 10)
+//                    PressableIcon(
+//                        icon: "translate",
+//                        color: bubbleState.primary,
+//                        onPress: translate
+//                    )
                 }
             }
         }

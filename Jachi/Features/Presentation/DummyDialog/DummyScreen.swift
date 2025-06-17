@@ -131,7 +131,7 @@ struct DummyScreen: View {
                         
                         Group {
                             Text("🧠 inputted target: \(topicActive.dialogs[activeIdx].question.highlight)")
-                            Text("🧠 inputted wordmark: \(topicActive.dialogs[activeIdx].question.wordMark)")
+                            Text("🧠 inputted wordmark: \(topicActive.dialogs[activeIdx].question.highlight)")
                         }
 
                         if recognizer.originalAudioDuration > 0 {
@@ -168,7 +168,7 @@ struct DummyScreen: View {
     private func toggleRecording() {
         let dialogue = topicActive.dialogs[activeIdx]
         let target = dialogue.question.highlight
-        let wordMark = dialogue.question.wordMark
+        let wordMark = dialogue.question.highlight
         print("toggle Recording \(target)")
         
         if isListening {

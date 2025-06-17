@@ -24,9 +24,16 @@ class ConvTalk {
     var isError: Bool
     var hanziItem: TextItem
     var pinYinItem: TextItem
+    var wordPrevix: String
 
     init(
-        hanzi: String, pinyin: String, translate: String, highlight: String = "", isUser: Bool = false, isError: Bool = false,
+        hanzi: String,
+        pinyin: String,
+        translate: String,
+        highlight: String = "",
+        wordPrevix: String = "",
+        isUser: Bool = false,
+        isError: Bool = false,
         hanziItem: TextItem = TextItem(previx: "", suffix: "", highlight: ""), pinYinItem: TextItem = TextItem(previx: "", suffix: "", highlight: "")
     ) {
         self.id = UUID()
@@ -38,6 +45,7 @@ class ConvTalk {
         self.isError = isError
         self.hanziItem = hanziItem
         self.pinYinItem = pinYinItem
+        self.wordPrevix = wordPrevix
         
     }
     
@@ -72,6 +80,7 @@ extension ConvTalk {
         pinyin: "Nǐ hǎo, wǒ yào mǎi yì gōng jīn líng shí",
         translate: "Hello, I want to buy one kilogram of snacks.",
         highlight: "一公斤零食",
+        wordPrevix: "要买",
         isUser: true,
         hanziItem: TextItem(previx: "你好，我要买", suffix: "", highlight: "一公斤零食"),
         pinYinItem: TextItem(previx: "Nǐ hǎo, wǒ yào mǎi ", suffix: "", highlight: "yì gōng jīn líng shí")
@@ -91,6 +100,7 @@ extension ConvTalk {
         pinyin: "Yì gōng jīn sānshí kuài? Kěyǐ dǎzhé ma?",
         translate: "Thirty yuan per kilogram? Can I get a discount?",
         highlight: "可以打折",
+        wordPrevix: "十块",
         isUser: true,
         hanziItem: TextItem(previx: "一公斤三十块？", suffix: "吗？", highlight: "可以打折"),
         pinYinItem: TextItem(previx: "Yì gōng jīn sānshí kuài? ", suffix: " ma?", highlight: "Kěyǐ dǎzhé")
@@ -129,6 +139,7 @@ extension ConvTalk {
         pinyin: "Hǎo de āyí, xiànjīn zhīfù kěyǐ ma?",
         translate: "Alright, auntie, is it okay if I pay with cash?",
         highlight: "现金支付",
+        wordPrevix: "阿姨",
         isUser: true,
         hanziItem: TextItem(previx: "好的阿姨，", suffix: "可以吗？", highlight: "现金支付"),
         pinYinItem: TextItem(previx: "Hǎo de āyí, ", suffix: " kěyǐ ma?", highlight: "xiànjīn zhīfù")
@@ -142,7 +153,7 @@ extension ConvTalk {
         hanziItem: TextItem(previx: "可以", suffix: "", highlight: ""),
         pinYinItem: TextItem(previx: "Kěyǐ", suffix: "", highlight: "")
     )
-    
+    //warning bisa jadi ada uncatch error
     static let talkUser5 = ConvTalk(
         hanzi: "好的，这给您阿姨，谢谢",
         pinyin: "Hǎo de, zhè gěi nín āyí, xièxie",
@@ -274,6 +285,7 @@ extension ConvTalk {
         pinyin: "Wǒ yào mǎi xiǎo lóng bāo, duōshǎo qián?",
         translate: "I'd like to buy xiaolongbao, how much is it?",
         highlight: "小笼包",
+        wordPrevix: "要买",
         isUser: true,
         hanziItem: TextItem(previx: "我要买", suffix: "，多少钱？", highlight: "小笼包"),
         pinYinItem: TextItem(previx: "Wǒ yào mǎi ", suffix: ", duōshǎo qián?", highlight: "xiǎo lóng bāo")
@@ -312,6 +324,7 @@ extension ConvTalk {
         pinyin: "Hǎo de, wǒ yào yí fèn, xièxie āyí",
         translate: "Alright, I'll take one portion. Thank you, auntie.",
         highlight: "谢谢 阿姨",
+        wordPrevix: "要一份",
         isUser: true,
         hanziItem: TextItem(previx: "好的，我要一份，", suffix: "", highlight: "谢谢 阿姨"),
         pinYinItem: TextItem(previx: "Hǎo de, wǒ yào yí fèn, ", suffix: "", highlight: "xièxie āyí")
