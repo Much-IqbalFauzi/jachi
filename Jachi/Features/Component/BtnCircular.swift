@@ -18,7 +18,7 @@ struct BtnCircular: View {
                 .foregroundColor(.lynxWhite)
                 .font(.system(size: 32, weight: .semibold))
         }
-        .frame(width: 76, height: 76)
+        .frame(width: 56, height: 56)
         .background(color)
         .clipShape(Circle())
         .background(

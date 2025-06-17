@@ -10,13 +10,13 @@ import SwiftUI
 struct ChatBg: View {
     var body: some View {
         GeometryReader { proxy in
-            Image("bg_new")
+            Image("BG-2")
                 .resizable()
                 .scaledToFill()
                 .frame(width: proxy.size.width, height: proxy.size.height)
                 .clipped()
-                .blur(radius: 4)
-                .opacity(0.5)
+                .blur(radius: 2)
+//                .opacity(0.5)
         }.ignoresSafeArea()
     }
 }

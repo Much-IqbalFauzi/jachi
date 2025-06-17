@@ -15,7 +15,7 @@ struct DialogScreen: View {
 
     @StateObject private var userBubble: BubbleState = .init()
     @StateObject private var botBubble: BubbleState = .init(
-        primary: .dustPink, bg: .lynxWhite)
+        primary: .blizzardBlue, bg: .autumnYellow)
 
     @StateObject private var botChibi: ChibiState = .init()
 
@@ -26,13 +26,13 @@ struct DialogScreen: View {
     var body: some View {
         ZStack {
             ChatBg()
-            Rectangle()
-                .fill(Color.dustBlizzard)
-                .opacity(0.4)
-                .ignoresSafeArea()
+//            Rectangle()
+//                .fill(Color.oceanBlue)
+//                .opacity(0.9)
+//                .ignoresSafeArea()
             GeometryReader { reader in
-                VStack(alignment: .trailing) {
-                    VStack(alignment: .center) {
+                VStack {
+                    HStack(alignment: .center) {
                         ProgressView(
                             value: 0.3,
                             label: {},
@@ -44,8 +44,11 @@ struct DialogScreen: View {
                         .progressViewStyle(Progress())
                     }
                     .padding(.bottom, 16)
+                    .padding(.top, 32)
                     .padding(.horizontal, 16)
+                    .background(Color.smokeYellow)
                     .frame(width: reader.size.width)
+                    .scaledToFit()
 
                     HStack {
                         Image(botChibi.state)
@@ -66,7 +69,7 @@ struct DialogScreen: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(
                                             Color(botBubble.primary),
-                                            lineWidth: 4)
+                                            lineWidth: 2)
                                 }
                                 //                            BorderedText("Auntie Jachi", bubbleState: botBubble)
                                 .frame(
@@ -94,9 +97,9 @@ struct DialogScreen: View {
                         }
                         .padding(.trailing, 8)
                     }
-                    .padding(.top, 56)
-                    .padding(.bottom, 38)
-
+                    .padding(.top, 32)
+                    .padding(.bottom, 12)
+                    
                     VStack {
                         HStack {
                             Text("You")
@@ -110,7 +113,7 @@ struct DialogScreen: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(
                                             Color(userBubble.primary),
-                                            lineWidth: 4)
+                                            lineWidth: 2)
                                 }
 //                            BorderedText("You", bubbleState: userBubble)
                                 .frame(
@@ -120,12 +123,13 @@ struct DialogScreen: View {
                                 .padding(.horizontal, 16)
                             Image(
                                 userBubble.isActive
-                                    ? "persona" : "persona-disable"
+                                    ? "ico-user" : "ico-user-disable"
                             )
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 44, height: 44)
+                            .frame(width: 40, height: 40)
                             .padding(.trailing, 16)
+                            .padding(.leading, -8)
                         }
                         .padding(.vertical, 8)
                         TextBubble(
@@ -144,6 +148,7 @@ struct DialogScreen: View {
                             })
                     }
                     .padding(.horizontal, 8)
+                    Spacer()
 
                     Hint("Hero za warudo")
                         .frame(
@@ -157,8 +162,6 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "microphone",
                             action: {
-                                //                                vm.changeAnswerState(convState: .inactive)
-                                //                                print("Microphone tapped")
                                 changeBotState(.inactive)
                                 changeUserState(.active)
                             })
@@ -166,7 +169,6 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "microbe",
                             action: {
-                                //                                vm.getCurrentColorState()
                                 changeBotState(.activeAuntie)
                                 changeUserState(.inactive)
                             }
@@ -176,8 +178,6 @@ struct DialogScreen: View {
                         BtnCircular(
                             icon: "pencil",
                             action: {
-                                //                                vm.changeAnswerState(convState: .activeAuntie)
-
                                 botChibi.changeState(.smile)
                             }
                         )

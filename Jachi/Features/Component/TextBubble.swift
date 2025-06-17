@@ -65,7 +65,8 @@ struct TextBubble<Content: View>: View {
                 }
             }
         }
-        .padding()
+        .padding(.vertical, 4)
+        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
         .background(
             UnevenRoundedRectangle(
@@ -75,7 +76,7 @@ struct TextBubble<Content: View>: View {
                 topTrailingRadius: radius,
                 style: .continuous
             )
-            .stroke(bubbleState.primary, lineWidth: 8)
+            .stroke(bubbleState.primary, lineWidth: 4)
             .fill(bubbleState.bg)
         )
         .padding(.horizontal, radius)
