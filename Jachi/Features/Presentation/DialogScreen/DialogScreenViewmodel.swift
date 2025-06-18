@@ -48,6 +48,7 @@ class DialogViewmodel: NSObject, ObservableObject {
     @Published var splicedAudioDuration: Float = 0.0
     @Published var predictedClass: String = ""
     @Published var resultCode: Int = -1
+    @Published var fullRecordedAudioURL: URL? = nil
     
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "zh-CN"))
     private let audioEngine = AVAudioEngine()
@@ -225,8 +226,8 @@ class DialogViewmodel: NSObject, ObservableObject {
         isRecording = false
         
         guard let beforeOffset = beforeTargetTimeOffset else {
-            self.resultCode = 10000
-            return 10000
+            self.resultCode = 8000
+            return 8000
         }
         
         let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
@@ -235,6 +236,12 @@ class DialogViewmodel: NSObject, ObservableObject {
         
         let fullBuffer = mergeBuffers(recordedBuffers)
         let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
+        
+        if let audioURL = saveBufferToFile(buffer: fullBuffer, sampleRate: sampleRate) {
+                self.fullRecordedAudioURL = audioURL
+            }
+        print("📦 recordedBuffers count: \(recordedBuffers.count)")
+        
         let slicedBuffer = sliceBuffer(fullBuffer, fromSample: startSample, toSample: endSample)
         let slicedDuration = Float(slicedBuffer.frameLength) / Float(sampleRate)
         
@@ -312,8 +319,14 @@ class DialogViewmodel: NSObject, ObservableObject {
         
         try? analyzer.add(request, withObserver: resultHandler)
         analyzer.analyze(buffer, atAudioFramePosition: 0)
-        _ = semaphore.wait(timeout: .now() + 2.0)
-        
+        let result = semaphore.wait(timeout: .now() + 2.0)
+
+        if result == .timedOut {
+            print("⚠️ Classification timeout — possibly due to too short input")
+            self.resultCode = 8000
+            return 8000
+        }
+
         self.resultCode = resultCode
         self.predictedClass = predicted
         return resultCode
@@ -379,3 +392,35 @@ extension DialogViewmodel: AVSpeechSynthesizerDelegate {
 }
 
 
+private func saveBufferToFile(buffer: AVAudioPCMBuffer, sampleRate: Double) -> URL? {
+    // Validate buffer
+    guard buffer.frameLength > 0 else {
+        print("❌ Error: Empty audio buffer - nothing to save")
+        return nil
+    }
+    
+    // Create unique filename
+    let filename = "recording_\(Date().timeIntervalSince1970).caf"
+    let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+    
+    // Configure audio settings
+    let settings: [String: Any] = [
+        AVFormatIDKey: kAudioFormatLinearPCM,
+        AVSampleRateKey: sampleRate,
+        AVNumberOfChannelsKey: buffer.format.channelCount,
+        AVLinearPCMBitDepthKey: 32,
+        AVLinearPCMIsFloatKey: true,
+        AVLinearPCMIsBigEndianKey: false
+    ]
+    
+    do {
+        print("💾 Attempting to save audio file with settings: \(settings)")
+        let file = try AVAudioFile(forWriting: fileURL, settings: settings)
+        try file.write(from: buffer)
+        print("✅ Successfully saved audio to: \(fileURL)")
+        return fileURL
+    } catch {
+        print("❌ Failed to save audio: \(error.localizedDescription)")
+        return nil
+    }
+}
