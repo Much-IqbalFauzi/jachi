@@ -18,7 +18,13 @@ enum auntieState {
     case answering
 }
 
-class DialogViewmodel: ObservableObject {
+enum btnRecordState {
+    case record
+    case stop
+    case submit
+}
+
+class DialogViewmodel: NSObject, ObservableObject {
     @Published var title: String = "Dialogue De Umerto"
     
     @Published private(set) var chat: [String] = []
@@ -55,12 +61,51 @@ class DialogViewmodel: ObservableObject {
     private var recordingBuffer: AVAudioPCMBuffer?
     private var recordedBuffers: [AVAudioPCMBuffer] = []
     
+    private let speechSynthesizer = AVSpeechSynthesizer()
+    @Published var isSpeaking: Bool = false
+//    private let speechSynthesizer: SpeechSynthesizerProviding = SpeechSynthesizer()
+    
+    @Published var auntiTalk: [ConvTalk] = []
+    @Published var auntiIdx: Int = 0
+    @Published var userTalk: [ConvTalk] = []
+    @Published var userIdx: Int = 0
+    @Published var isUserTurn: Bool = true
+    
+    @Published var btnRecordState: btnRecordState = .record
+    
     init(topic: ConvTopic) {
         self.selectedTopic = topic
         self.questionn = topic.dialogs[activeIndex].question
         self.answer = topic.dialogs[activeIndex].answer
         
-        chatField.append(topic.dialogs[activeIndex].question)
+        self.auntiTalk = topic.botTalk
+        self.userTalk = topic.userTalk
+        
+//        self.chatField.append(topic.dialogs[activeIndex].question)
+    }
+    
+    
+    
+    func getCurrentRecordState() -> String {
+        switch self.btnRecordState {
+        case .record:
+            return "microphone.fill"
+        case .stop:
+            return "stop.fill"
+        case .submit:
+            return "paperplane.fill"
+        }
+    }
+    
+    func nextConversation(_ callback: () -> Void = {}) {
+        if isUserTurn {
+            self.auntiIdx += 1
+            self.isUserTurn = false
+            callback()
+        } else {
+            self.userIdx += 1
+            self.isUserTurn = true
+        }
     }
     
     func getActiveIndex() -> Int {
@@ -68,7 +113,11 @@ class DialogViewmodel: ObservableObject {
     }
     
     func progressFormatting() -> String {
-        return "\(getActiveIndex())/\(selectedTopic.dialogs.count)"
+        return "\(userIdx + 1)/\(userTalk.count)"
+    }
+    
+    func progressPercentage() -> Double {
+        return Double((userIdx + 1)) / Double(userTalk.count) * 100
     }
     
     func append(_ text: String) {
@@ -96,6 +145,15 @@ class DialogViewmodel: ObservableObject {
         case .answering:
             break
         }
+    }
+    
+    func speakutterance(_ message: String, rate: Float = 0.5, pitch: Float = 1.0) {
+        let utterance = AVSpeechUtterance(string: message)
+        utterance.pitchMultiplier = pitch
+        utterance.rate = rate
+        utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
+
+        speechSynthesizer.speak(utterance)
     }
     
     func requestPermissions() {
@@ -303,5 +361,21 @@ class DialogViewmodel: ObservableObject {
     }
 }
 
+extension DialogViewmodel: AVSpeechSynthesizerDelegate {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        self.isSpeaking = true
+    }
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        self.isSpeaking = false
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        self.isSpeaking = false
+        print("Finished speaking")
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+}
 
 

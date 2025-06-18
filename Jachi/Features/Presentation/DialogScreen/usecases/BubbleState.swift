@@ -28,15 +28,15 @@ class BubbleState: ObservableObject {
     func toggleState(state: convTalkState) {
         switch state {
         case .active:
-            self.primary = .blizzardBlue
+            self.primary = .dustBlizzard
             self.bg = .lynxWhite
             self.isActive = true
         case .inactive:
-            self.primary = .blizzardBlue
+            self.primary = .dustBlizzard
             self.bg = .smokeGray
             self.isActive = false
         case .correct:
-            self.primary = .blizzardBlue
+            self.primary = .dustBlizzard
             self.bg = .lynxWhite
             self.isActive = true
         case .incorrect:
@@ -44,7 +44,7 @@ class BubbleState: ObservableObject {
             self.bg = .candyFloss
             self.isActive = true
         case .activeAuntie:
-            self.primary = .blizzardBlue
+            self.primary = .dustBlizzard
             self.bg = .smokeYellow
             self.isActive = false
         }

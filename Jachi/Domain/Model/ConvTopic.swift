@@ -12,12 +12,16 @@ class ConvTopic {
     var name: String
     var hanzi: String
     var dialogs: [ConvDialog] = []
+    var userTalk: [ConvTalk] = []
+    var botTalk: [ConvTalk] = []
 
-    init(name: String, hanzi: String, dialog: [ConvDialog] = []) {
+    init(name: String, hanzi: String, dialog: [ConvDialog] = [], userTalk: [ConvTalk] = [], botTalk: [ConvTalk] = []) {
         self.id = UUID()
         self.name = name
         self.hanzi = hanzi
         self.dialogs = dialog
+        self.userTalk = userTalk
+        self.botTalk = botTalk
     }
 }
 
@@ -31,7 +35,23 @@ extension ConvTopic {
             .convo3,
             .convo4,
             .convo5
-        ])
+        ],
+        userTalk: [
+            .talkUser1,
+            .talkUser2,
+            .talkUser3,
+            .talkUser4,
+            .talkUser5
+        ],
+        botTalk: [
+            .emptyTalk,
+            .talkAuntie1,
+            .talkAuntie2,
+            .talkAuntie3,
+            .talkAuntie4,
+            .emptyTalk
+        ]
+    )
     
     static let topic2 = ConvTopic(
         name: "Is there any promo?",
