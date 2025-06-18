@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import AVFAudio
 
 struct DialogScreen: View {
 
@@ -21,6 +22,8 @@ struct DialogScreen: View {
         primary: .dustBlizzard, bg: .smokeGray)
 
     @StateObject private var botChibi: ChibiState = .init()
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var isRecording: Bool = false
 
     @ObservedObject private var recordTimer: TimerState = .init()
     @ObservedObject private var animationTimer: TimerState = .init()
@@ -100,6 +103,7 @@ struct DialogScreen: View {
                                 )
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
+                            //this one
                             TextBubble(
                                 bubbleState: botBubble,
                                 isError: vm.answer.isError,
@@ -201,6 +205,14 @@ struct DialogScreen: View {
                         }
 
                     HStack {
+                        Text("Audio URL: \(vm.fullRecordedAudioURL?.absoluteString ?? "nil")")
+                        if let url = vm.fullRecordedAudioURL {
+                            Button("▶️ Play Recording") {
+                                playAudio(from: url)
+                            }.padding()
+                        }
+                                    
+                            
                         BtnCircular(
                             icon: vm.getCurrentRecordState(),
                             fill: .dustBlizzard,
@@ -210,6 +222,7 @@ struct DialogScreen: View {
                     .frame(width: reader.size.width)
                     //                    .background(Color.dustBlizzard)
                     //                    .ignoresSafeArea()
+                    
                 }
                 .frame(width: reader.size.width, height: reader.size.height)
             }
@@ -274,31 +287,34 @@ struct DialogScreen: View {
 
     private func toggleRecording() {
         let userTalk = vm.questionn
-
-        if !vm.isRecording {
+        
+        if vm.isRecording {
+            // Stop recording and process audio
             let result = vm.stopRecordingReal(
                 target: vm.questionn.highlight,
                 duration: 2.0
             )
-
-            print("the result is \(result)")
-
+            
+            print("Recording stopped, result: \(result)")
+            
             if result > 0 && result < 101 {
                 moveToNextDialogue()
             }
         } else {
+            // Start recording (reset state first)
+            vm.resultCode = -1
+            vm.originalAudioDuration = 0
+            vm.predictedClass = ""
+            
             vm.startRecordingReal(
                 beforeTarget: userTalk.wordPrevix,
                 target: userTalk.highlight,
                 duration: 2.0
             )
-            vm.resultCode = -1
-            vm.originalAudioDuration = 0
-            vm.predictedClass = ""
+            
+            print("Recording started")
         }
-        vm.isRecording.toggle()
     }
-
     private func moveToNextDialogue() {
         if vm.checkDialogMax() {
             vm.nextQuestion()
@@ -306,7 +322,58 @@ struct DialogScreen: View {
             print("Do something")
         }
     }
+    private func readText(_ text: String){
+        let utterance = AVSpeechUtterance(string: text)
+            if let chineseVoice = AVSpeechSynthesisVoice(language: "zh-CN") {
+                utterance.voice = chineseVoice
+            } else {
+                print("⚠️ zh-CN voice not available. Using default voice.")
+            }
+            utterance.rate = 0.5
+            AVSpeechSynthesizer().speak(utterance)
+    }
+    
+    private func playAudio(from url: URL) {
+        // 1. Verify file exists
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            print("❌ File doesn't exist at path: \(url.path)")
+            return
+        }
+        
+        // 2. Configure audio session
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("❌ Audio session setup failed: \(error.localizedDescription)")
+            return
+        }
+        
+        // 3. Initialize player safely
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.prepareToPlay()
+            
+            // 4. Store reference and play
+            self.audioPlayer = player
+            DispatchQueue.main.async {
+                player.play()
+                print("✅ Playing audio successfully")
+            }
+        } catch {
+            print("❌ Player initialization failed: \(error.localizedDescription)")
+            
+            // Debug the problematic file
+            if let data = try? Data(contentsOf: url) {
+                print("File size: \(data.count) bytes")
+            } else {
+                print("Couldn't read file data")
+            }
+        }
+    }
 }
+
 
 #Preview {
     DialogScreen(topic: .topic1)
