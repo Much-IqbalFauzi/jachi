@@ -5,10 +5,10 @@
 //  Created by Muchamad Iqbal Fauzi on 12/06/25.
 //
 
+import AVFAudio
 import Combine
 import Foundation
 import SwiftUI
-import AVFAudio
 
 struct DialogScreen: View {
 
@@ -27,8 +27,10 @@ struct DialogScreen: View {
 
     @ObservedObject private var recordTimer: TimerState = .init()
     @ObservedObject private var animationTimer: TimerState = .init()
+    @ObservedObject private var dialogTip: TipState = .init()
 
     @State private var isAnimatingView: Bool = false
+    private let duration: Double = 5.0
 
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
@@ -40,21 +42,21 @@ struct DialogScreen: View {
             GeometryReader { reader in
                 VStack(alignment: .center) {
                     HStack(alignment: .center) {
-                        ProgressView(
-                            value: 1,
-                            label: {},
-                            currentValueLabel: {
-                                Text("\(vm.progressFormatting())").padding(
-                                    .top, -30)
-                            }
-                        )
-                        .progressViewStyle(Progress())
+//                        ProgressView(
+//                            value: 1,
+//                            label: {},
+//                            currentValueLabel: {
+//                                Text("\(vm.progressFormatting())").padding(
+//                                    .top, -30)
+//                            }
+//                        )
+//                        .progressViewStyle(Progress())
                     }
+                    .frame(width: reader.size.width)
                     .padding(.bottom, 16)
                     .padding(.top, 32)
                     .padding(.horizontal, 16)
                     .background(Color.smokeYellow)
-                    .frame(width: reader.size.width)
                     .scaledToFit()
 
                     Rectangle()
@@ -65,7 +67,7 @@ struct DialogScreen: View {
                             alignment: .leading
                         )
                         .animation(
-                            .linear(duration: 2),
+                            .linear(duration: duration),
                             value: isAnimatingView
                         )
                         .opacity(isAnimatingView ? 1 : 0)
@@ -117,7 +119,6 @@ struct DialogScreen: View {
                                     vm.speakutterance(
                                         vm.auntiTalk[vm.auntiIdx].hanzi,
                                         rate: 0.0001, pitch: -4)
-                                    print("the speaker state is: \(vm.isSpeaking)")
                                 },
                                 translate: {},
                                 {
@@ -192,10 +193,12 @@ struct DialogScreen: View {
                     .padding(.horizontal, 8)
                     Spacer()
 
-                    Tips({
-                        Text("Muehehehehe")
-                    })
-                    .padding(.horizontal, 48)
+                    if dialogTip.isShowTip {
+                        Tips({
+                            Text(dialogTip.tipText)
+                        }).padding(.horizontal, 48)
+                    }
+                    
 
                     Spacer()
                     Text(stringTimer())
@@ -205,24 +208,43 @@ struct DialogScreen: View {
                         }
 
                     HStack {
-                        Text("Audio URL: \(vm.fullRecordedAudioURL?.absoluteString ?? "nil")")
-                        if let url = vm.fullRecordedAudioURL {
-                            Button("▶️ Play Recording") {
-                                playAudio(from: url)
-                            }.padding()
+                        //                        Text("Audio URL: \(vm.fullRecordedAudioURL?.absoluteString ?? "nil")")
+                        //                        if let url = vm.fullRecordedAudioURL {
+                        //                            Button("▶️ Play Recording") {
+                        //                                playAudio(from: url)
+                        //                            }.padding()
+                        //                        }
+
+                        if vm.btnRecordState == .submit {
+                            BtnAction(
+                                icon: "trash",
+                                fill: .dustBlizzard,
+                                action: deleteButtonAction
+                            )
+                            .padding(.trailing, 20)
+
                         }
-                                    
-                            
+                        
                         BtnCircular(
                             icon: vm.getCurrentRecordState(),
                             fill: .dustBlizzard,
                             action: recordButtonAction)
+                        
+                        if vm.btnRecordState == .submit {
+                            BtnAction(
+                                icon: "speaker.wave.2",
+                                fill: .dustBlizzard,
+                                action: {}
+                            )
+                            .padding(.leading, 20)
+
+                        }
                     }
                     .padding(.top, 24)
                     .frame(width: reader.size.width)
                     //                    .background(Color.dustBlizzard)
                     //                    .ignoresSafeArea()
-                    
+
                 }
                 .frame(width: reader.size.width, height: reader.size.height)
             }
@@ -240,14 +262,31 @@ struct DialogScreen: View {
             vm.btnRecordState = .submit
         case .submit:
             vm.btnRecordState = .record
-            vm.nextConversation({
+            vm.nextConversation({ isFinish in
+                if (isFinish) {
+                    navigation.pop()
+                }
                 botChibi.toggleActive()
                 botBubble.toggleState(state: .activeAuntie)
                 userBubble.toggleState(state: .inactive)
                 runAnimationTimer()
+                vm.speakutterance(
+                    vm.auntiTalk[vm.auntiIdx].hanzi,
+                    pitch: -4)
             })
             recordTimer.reset()
+            
+            // TODO: ANALYZE ML
+            
         }
+    }
+    
+    private func deleteButtonAction() {
+        vm.btnRecordState = .record
+        recordTimer.reset()
+        
+        // TODO: ADD SOMETHING TO DELETE AV AUDIO SESSION
+        
     }
 
     private func stringTimer() -> String {
@@ -259,11 +298,12 @@ struct DialogScreen: View {
         self.isAnimatingView = true
         animationTimer.startTime = Date()
         animationTimer.start()
+        dialogTip.toggleChangeTip(.right, true)
     }
 
     private func readAnimationTimer() {
         if animationTimer.isRunning {
-            if animationTimer.timerString == "2.0" {
+            if animationTimer.timerString == String(duration) {
                 animationTimer.stop()
                 self.isAnimatingView = false
                 // TODO: DO SOMETHING
@@ -271,6 +311,9 @@ struct DialogScreen: View {
                 botChibi.toggleActive()
                 botBubble.toggleState(state: .inactive)
                 vm.nextConversation()
+                
+                // TODO: CLOSE TIP
+                dialogTip.toggleChangeTip(.netral, false)
             }
         }
     }
@@ -281,22 +324,21 @@ struct DialogScreen: View {
 
     private func changeBotState(_ state: convTalkState) {
         botBubble.toggleState(state: state)
-
         botChibi.toggleActive()
     }
 
     private func toggleRecording() {
         let userTalk = vm.questionn
-        
+
         if vm.isRecording {
             // Stop recording and process audio
             let result = vm.stopRecordingReal(
                 target: vm.questionn.highlight,
                 duration: 2.0
             )
-            
+
             print("Recording stopped, result: \(result)")
-            
+
             if result > 0 && result < 101 {
                 moveToNextDialogue()
             }
@@ -305,13 +347,13 @@ struct DialogScreen: View {
             vm.resultCode = -1
             vm.originalAudioDuration = 0
             vm.predictedClass = ""
-            
+
             vm.startRecordingReal(
                 beforeTarget: userTalk.wordPrevix,
                 target: userTalk.highlight,
                 duration: 2.0
             )
-            
+
             print("Recording started")
         }
     }
@@ -322,24 +364,24 @@ struct DialogScreen: View {
             print("Do something")
         }
     }
-    private func readText(_ text: String){
+    private func readText(_ text: String) {
         let utterance = AVSpeechUtterance(string: text)
-            if let chineseVoice = AVSpeechSynthesisVoice(language: "zh-CN") {
-                utterance.voice = chineseVoice
-            } else {
-                print("⚠️ zh-CN voice not available. Using default voice.")
-            }
-            utterance.rate = 0.5
-            AVSpeechSynthesizer().speak(utterance)
+        if let chineseVoice = AVSpeechSynthesisVoice(language: "zh-CN") {
+            utterance.voice = chineseVoice
+        } else {
+            print("⚠️ zh-CN voice not available. Using default voice.")
+        }
+        utterance.rate = 0.5
+        AVSpeechSynthesizer().speak(utterance)
     }
-    
+
     private func playAudio(from url: URL) {
         // 1. Verify file exists
         guard FileManager.default.fileExists(atPath: url.path) else {
             print("❌ File doesn't exist at path: \(url.path)")
             return
         }
-        
+
         // 2. Configure audio session
         do {
             let session = AVAudioSession.sharedInstance()
@@ -349,12 +391,12 @@ struct DialogScreen: View {
             print("❌ Audio session setup failed: \(error.localizedDescription)")
             return
         }
-        
+
         // 3. Initialize player safely
         do {
             let player = try AVAudioPlayer(contentsOf: url)
             player.prepareToPlay()
-            
+
             // 4. Store reference and play
             self.audioPlayer = player
             DispatchQueue.main.async {
@@ -362,8 +404,9 @@ struct DialogScreen: View {
                 print("✅ Playing audio successfully")
             }
         } catch {
-            print("❌ Player initialization failed: \(error.localizedDescription)")
-            
+            print(
+                "❌ Player initialization failed: \(error.localizedDescription)")
+
             // Debug the problematic file
             if let data = try? Data(contentsOf: url) {
                 print("File size: \(data.count) bytes")
@@ -373,7 +416,6 @@ struct DialogScreen: View {
         }
     }
 }
-
 
 #Preview {
     DialogScreen(topic: .topic1)
