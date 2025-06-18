@@ -18,8 +18,8 @@ struct DialogueCardView: View {
     // Menentukan nama gambar berdasarkan index
     private var imageName: String {
         switch topicIndex {
-        case 0: return "Image_Card"
-        case 1: return "Image_Card1"
+        case 0: return "Image_Card1"
+        case 1: return "Image_Card"
         case 2: return "Topic Image"
         default: return "Image_Card"
         }
