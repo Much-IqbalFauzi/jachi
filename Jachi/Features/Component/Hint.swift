@@ -24,7 +24,7 @@ struct Hint: View {
             .cornerRadius(16)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.dustAutumn, lineWidth: 4)
+                    .stroke(Color.darkGreen, lineWidth: 2)
             }
     }
 }

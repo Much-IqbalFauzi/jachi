@@ -13,6 +13,8 @@ class BubbleState: ObservableObject {
     @Published private(set) var bg: Color
     @Published private(set) var isActive: Bool
     
+    
+    
     init() {
         self.primary = .dustBlizzard
         self.bg = .lynxWhite
@@ -47,6 +49,11 @@ class BubbleState: ObservableObject {
             self.primary = .dustBlizzard
             self.bg = .smokeYellow
             self.isActive = false
+        case .secondaryDisabled:
+            self.primary = .CyanLowopacity
+            self.bg = .darkGreen
+            self.isActive = false
+
         }
     }
 }
@@ -57,4 +64,5 @@ enum convTalkState {
     case correct
     case incorrect
     case activeAuntie
+    case secondaryDisabled
 }

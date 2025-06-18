@@ -47,7 +47,7 @@ struct TextBubble<Content: View>: View {
                     .foregroundColor(bubbleState.primary)
                 HStack {
                     PressableIcon(
-                        icon: "speaker.wave.2",
+                        icon: "speaker.wave.2.fill",
                         color: bubbleState.primary,
                         onPress: speaker
                     )
