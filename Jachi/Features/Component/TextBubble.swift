@@ -17,6 +17,8 @@ struct TextBubble<Content: View>: View {
     private var translate: () -> Void
     private var isError: Bool
     private var bubbleState: BubbleState
+    
+    @State private var speakerActive: Bool = false
 
     init(
         bubbleState: BubbleState = .init(),
@@ -48,13 +50,12 @@ struct TextBubble<Content: View>: View {
                 HStack {
                     PressableIcon(
                         icon: "speaker.wave.2.fill",
-                        color: bubbleState.primary,
-                        onPress: speaker
-                    )
-                    PressableIcon(
-                        icon: "tortoise",
-                        color: bubbleState.primary,
-                        onPress: slow
+                        color: speakerActive ? bubbleState.primary : Color.CyanLowopacity,
+                        onPress:{
+                            speaker()
+                                speakerActive.toggle()
+                            
+                        }
                     )
                     .padding(.leading, 10)
 //                    PressableIcon(

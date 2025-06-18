@@ -53,7 +53,10 @@ class BubbleState: ObservableObject {
             self.primary = .CyanLowopacity
             self.bg = .darkGreen
             self.isActive = false
-
+        case .speakerInactive:
+            self.primary = .CyanLowopacity
+            self.bg = .lynxWhite
+            self.isActive = false
         }
     }
 }
@@ -65,4 +68,5 @@ enum convTalkState {
     case incorrect
     case activeAuntie
     case secondaryDisabled
+    case speakerInactive
 }
