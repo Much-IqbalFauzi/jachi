@@ -126,11 +126,11 @@ extension ConvTalk {
     )
     
     static let talkAuntie3 = ConvTalk(
-        hanzi: "三分七十块，我们的烤鸭是精选的",
+        hanzi: "三分七十快，我们的东西是精选的",
         pinyin: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de",
         translate: "Three portions for seventy yuan — our products is carefully selected.",
         highlight: "",
-        hanziItem: TextItem(previx: "三分七十块，我们的烤鸭是精选的", suffix: "", highlight: ""),
+        hanziItem: TextItem(previx: "三分七十快，我们的东西是精选的", suffix: "", highlight: ""),
         pinYinItem: TextItem(previx: "Sān fèn qīshí kuài, wǒmen de dōng xi shì jīngxuǎn de", suffix: "", highlight: "")
     )
     
