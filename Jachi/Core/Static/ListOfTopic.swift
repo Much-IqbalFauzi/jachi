@@ -7,8 +7,8 @@
 
 let listOfTopic: [ConvTopic] = [
     .topic1, //ini
-    .topic2,
-    .topic3, //ini
-    .topic4
+    .topic2
+//    .topic3, //ini
+//    .topic4
 ]
 
