@@ -22,6 +22,7 @@ enum btnRecordState {
     case record
     case stop
     case submit
+    case giveup
 }
 
 class DialogViewmodel: NSObject, ObservableObject {
@@ -62,6 +63,8 @@ class DialogViewmodel: NSObject, ObservableObject {
     private var recordingBuffer: AVAudioPCMBuffer?
     private var recordedBuffers: [AVAudioPCMBuffer] = []
     
+    @Published var totalWrong: Int = 0
+    
     private let speechSynthesizer = AVSpeechSynthesizer()
     @Published var isSpeaking: Bool = false
 //    private let speechSynthesizer: SpeechSynthesizerProviding = SpeechSynthesizer()
@@ -95,6 +98,8 @@ class DialogViewmodel: NSObject, ObservableObject {
             return "stop.fill"
         case .submit:
             return "paperplane.fill"
+        case .giveup:
+            return "chevron.right.2"
         }
     }
     
@@ -172,7 +177,7 @@ class DialogViewmodel: NSObject, ObservableObject {
         #endif
     }
     
-    func startRecordingReal(beforeTarget: String, target: String, duration: Float) {
+    func startRecordingReal() {
         transcript = ""
         isRecording = true
         audioStartTime = Date()
@@ -201,7 +206,7 @@ class DialogViewmodel: NSObject, ObservableObject {
                 DispatchQueue.main.async {
                     self.transcript = result.bestTranscription.formattedString
                     if self.beforeTargetTimeOffset == nil,
-                       self.transcript.contains(beforeTarget),
+                       self.transcript.contains(self.userTalk[self.userIdx].wordPrevix),
                        let start = self.audioStartTime {
                         self.beforeTargetTimeOffset = Date().timeIntervalSince(start)
                     }
@@ -219,20 +224,13 @@ class DialogViewmodel: NSObject, ObservableObject {
         try? audioEngine.start()
     }
     
-    func stopRecordingReal(target: String, duration: Float) -> Int {
+    func stopRecordingReal() {
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
         isRecording = false
         
-        guard let beforeOffset = beforeTargetTimeOffset else {
-            self.resultCode = 8000
-            return 8000
-        }
-        
         let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
-        let startSample = Int(beforeOffset * sampleRate)
-        let endSample = Int((beforeOffset + Double(duration)) * sampleRate)
         
         let fullBuffer = mergeBuffers(recordedBuffers)
         let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
@@ -240,7 +238,38 @@ class DialogViewmodel: NSObject, ObservableObject {
         if let audioURL = saveBufferToFile(buffer: fullBuffer, sampleRate: sampleRate) {
                 self.fullRecordedAudioURL = audioURL
             }
-        print("📦 recordedBuffers count: \(recordedBuffers.count)")
+        
+//        guard let beforeOffset = beforeTargetTimeOffset else {
+//            self.resultCode = 8000
+//            return 8000
+//        }
+//        
+//        let startSample = Int(beforeOffset * sampleRate)
+//        let endSample = Int((beforeOffset + Double(duration)) * sampleRate)
+//        
+//        let slicedBuffer = sliceBuffer(fullBuffer, fromSample: startSample, toSample: endSample)
+//        let slicedDuration = Float(slicedBuffer.frameLength) / Float(sampleRate)
+//        
+//        self.originalAudioDuration = fullDuration
+//        self.splicedAudioDuration = slicedDuration
+//        
+//        let result = classify(buffer: slicedBuffer, target: target)
+//        return result
+    }
+    
+    func anaylizeReal(duration: Float = 5.0) -> Int {
+        let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
+        let fullBuffer = mergeBuffers(recordedBuffers)
+        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
+        
+        
+        guard let beforeOffset = beforeTargetTimeOffset else {
+            self.resultCode = 8000
+            return 8000
+        }
+        
+        let startSample = Int(beforeOffset * sampleRate)
+        let endSample = Int((beforeOffset + Double(duration)) * sampleRate)
         
         let slicedBuffer = sliceBuffer(fullBuffer, fromSample: startSample, toSample: endSample)
         let slicedDuration = Float(slicedBuffer.frameLength) / Float(sampleRate)
@@ -248,8 +277,18 @@ class DialogViewmodel: NSObject, ObservableObject {
         self.originalAudioDuration = fullDuration
         self.splicedAudioDuration = slicedDuration
         
-        let result = classify(buffer: slicedBuffer, target: target)
+        let result = classify(buffer: slicedBuffer, target: userTalk[userIdx].highlight)
         return result
+    }
+    
+    func captureAudio() {
+        let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
+        let fullBuffer = mergeBuffers(recordedBuffers)
+        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
+        
+        if let audioURL = saveBufferToFile(buffer: fullBuffer, sampleRate: sampleRate) {
+                self.fullRecordedAudioURL = audioURL
+            }
     }
     
     private func mergeBuffers(_ buffers: [AVAudioPCMBuffer]) -> AVAudioPCMBuffer {
