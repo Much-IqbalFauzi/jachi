@@ -57,4 +57,7 @@ extension Color {
     static let oceanBlue = Color(hex: "#1B3B5D")
     static let smokeYellow = Color(hex: "#FFF8DB")
     static let whiteGreen = Color(hex: "#92C5C7")
+    static let CyanLowopacity = Color(hex: "#87D0C3")//cyan yang dipake buat volume kalau disabled
+    
+
 }
