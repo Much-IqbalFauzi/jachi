@@ -98,11 +98,11 @@ class DialogViewmodel: NSObject, ObservableObject {
         }
     }
     
-    func nextConversation(_ callback: () -> Void = {}) {
+    func nextConversation(_ callback: (_ isFinish: Bool) -> Void = {isFinish in }) {
         if isUserTurn {
             self.auntiIdx += 1
+            callback(auntiIdx >= auntiTalk.count)
             self.isUserTurn = false
-            callback()
         } else {
             self.userIdx += 1
             self.isUserTurn = true
