@@ -27,8 +27,8 @@ class ConvTopic {
 
 extension ConvTopic {
     static let topic1 = ConvTopic(
-        name: "Buying Snacks?",
-        hanzi: "买小零食", //keyidazhe
+        name: "Buying Snacks",
+        hanzi: "买小笼包", //keyidazhe
         dialog: [
             .convo1,
             .convo2,
@@ -55,7 +55,7 @@ extension ConvTopic {
     
     static let topic2 = ConvTopic(
         name: "Buying Little Baskets Bun",
-        hanzi: "买小笼包",
+        hanzi: "三分七十快，我们的东西是精选的",
         dialog: [
             .convo6,
             .convo7,
