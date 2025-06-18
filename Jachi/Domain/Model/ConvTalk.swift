@@ -70,7 +70,7 @@ class ConvTalk {
 extension ConvTalk {
 
     static let emptyTalk = ConvTalk(
-        hanzi: "...", pinyin: "...", translate: "...", highlight: "")
+        hanzi: "", pinyin: "...", translate: "...", highlight: "", hanziItem: TextItem(previx: "...", suffix: "", highlight: ""), pinYinItem: TextItem(previx: "...", suffix: "", highlight: ""))
     
     // TODO: OUR List Pronounce
 

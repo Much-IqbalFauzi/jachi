@@ -8,9 +8,13 @@
 import Foundation
 
 class ChibiState: ObservableObject {
-    @Published private(set) var state: String = "auntie-normal"
-    private var isActive: Bool = true
+    @Published private(set) var state: String = "auntie-normal-disable"
+    private var isActive: Bool = false
     private var stateValue: chibiState = .nomal
+    
+    init(_ initialState: chibiState = .nomal) {
+        self.stateValue = initialState
+    }
     
     func changeState(_ newState: chibiState) {
         switch newState {
@@ -25,6 +29,7 @@ class ChibiState: ObservableObject {
     
     func toggleActive() {
         isActive.toggle()
+        print("the state value is \(stateValue)")
         changeState(stateValue)
     }
 }

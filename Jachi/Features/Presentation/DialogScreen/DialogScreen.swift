@@ -6,20 +6,26 @@
 //
 
 import Combine
+import Foundation
 import SwiftUI
 
 struct DialogScreen: View {
 
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
-    
+
     @StateObject private var recognizer = SpeechRecognizer()
 
     @StateObject private var userBubble: BubbleState = .init()
     @StateObject private var botBubble: BubbleState = .init(
-        primary: .blizzardBlue, bg: .autumnYellow)
+        primary: .dustBlizzard, bg: .smokeGray)
 
     @StateObject private var botChibi: ChibiState = .init()
+
+    @ObservedObject private var recordTimer: TimerState = .init()
+    @ObservedObject private var animationTimer: TimerState = .init()
+
+    @State private var isAnimatingView: Bool = false
 
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
@@ -28,15 +34,11 @@ struct DialogScreen: View {
     var body: some View {
         ZStack {
             ChatBg()
-//            Rectangle()
-//                .fill(Color.oceanBlue)
-//                .opacity(0.9)
-//                .ignoresSafeArea()
             GeometryReader { reader in
-                VStack {
+                VStack(alignment: .center) {
                     HStack(alignment: .center) {
                         ProgressView(
-                            value: 0.3,
+                            value: 1,
                             label: {},
                             currentValueLabel: {
                                 Text("\(vm.progressFormatting())").padding(
@@ -51,6 +53,24 @@ struct DialogScreen: View {
                     .background(Color.smokeYellow)
                     .frame(width: reader.size.width)
                     .scaledToFit()
+
+                    Rectangle()
+                        .fill(Color.lightGreen)
+                        .frame(height: 5)
+                        .frame(
+                            width: isAnimatingView ? reader.size.width : 0,
+                            alignment: .leading
+                        )
+                        .animation(
+                            .linear(duration: 2),
+                            value: isAnimatingView
+                        )
+                        .opacity(isAnimatingView ? 1 : 0)
+                        .onReceive(animationTimer.timer) { timer in
+                            animationTimer.updateTimerString()
+                            readAnimationTimer()
+                        }
+                        .padding(.top, -8)
 
                     HStack {
                         Image(botChibi.state)
@@ -84,16 +104,29 @@ struct DialogScreen: View {
                                 bubbleState: botBubble,
                                 isError: vm.answer.isError,
                                 isUser: vm.answer.isUser,
-                                speaker: {},
-                                slow: {},
+                                speaker: {
+                                    vm.speakutterance(
+                                        vm.auntiTalk[vm.auntiIdx].hanzi,
+                                        pitch: -4)
+                                },
+                                slow: {
+                                    vm.speakutterance(
+                                        vm.auntiTalk[vm.auntiIdx].hanzi,
+                                        rate: 0.0001, pitch: -4)
+                                    print("the speaker state is: \(vm.isSpeaking)")
+                                },
                                 translate: {},
                                 {
-                                    vm.answer.buildHanzi(botBubble.primary)
-                                        .padding(.top, 8)
+                                    vm.auntiTalk[vm.auntiIdx].buildHanzi(
+                                        botBubble.primary
+                                    )
+                                    .padding(.top, 8)
+                                    .padding(.bottom, 8)
+                                    if vm.auntiTalk[vm.auntiIdx].hanzi != "" {
+                                        vm.auntiTalk[vm.auntiIdx].buildPinyin(
+                                            botBubble.primary
+                                        )
                                         .padding(.bottom, 8)
-                                    if vm.answer.hanzi != "..." {
-                                        vm.answer.buildPinyin(botBubble.primary)
-                                            .padding(.bottom, 8)
                                     }
                                 })
                         }
@@ -101,7 +134,7 @@ struct DialogScreen: View {
                     }
                     .padding(.top, 32)
                     .padding(.bottom, 12)
-                    
+
                     VStack {
                         HStack {
                             Text("You")
@@ -117,63 +150,65 @@ struct DialogScreen: View {
                                             Color(userBubble.primary),
                                             lineWidth: 2)
                                 }
-//                            BorderedText("You", bubbleState: userBubble)
+                                //                            BorderedText("You", bubbleState: userBubble)
                                 .frame(
                                     maxWidth: .infinity,
                                     alignment: .trailing
                                 )
                                 .padding(.horizontal, 16)
-                            Image(
-                                userBubble.isActive
-                                    ? "ico-user" : "ico-user-disable"
-                            )
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40, height: 40)
-                            .padding(.trailing, 16)
-                            .padding(.leading, -8)
                         }
                         .padding(.vertical, 8)
                         TextBubble(
                             bubbleState: userBubble,
                             isError: vm.questionn.isError,
                             isUser: vm.questionn.isUser,
-                            speaker: {},
-                            slow: {},
+                            speaker: {
+                                vm.speakutterance(
+                                    vm.userTalk[vm.userIdx].hanzi,
+                                    pitch: -4)
+                            },
+                            slow: {
+                                vm.speakutterance(
+                                    vm.userTalk[vm.userIdx].hanzi, rate: 0.0001,
+                                    pitch: -4)
+                            },
                             translate: {},
                             {
-                                vm.questionn.buildHanzi(userBubble.primary)
-                                    .padding(.top, 8)
-                                    .padding(.bottom, 8)
-                                vm.questionn.buildPinyin(userBubble.primary)
-                                    .padding(.bottom, 8)
+                                vm.userTalk[vm.userIdx].buildHanzi(
+                                    userBubble.primary
+                                )
+                                .padding(.top, 8)
+                                .padding(.bottom, 8)
+                                vm.userTalk[vm.userIdx].buildPinyin(
+                                    userBubble.primary
+                                )
+                                .padding(.bottom, 8)
                             })
                     }
                     .padding(.horizontal, 8)
                     Spacer()
 
-                    Hint("Hero za warudo")
-                        .frame(
-                            maxWidth: .infinity,
-                            alignment: .center
-                        )
-                        .padding()
+                    Tips({
+                        Text("Muehehehehe")
+                    })
+                    .padding(.horizontal, 48)
 
                     Spacer()
+                    Text(stringTimer())
+                        .foregroundStyle(Color.lynxWhite)
+                        .onReceive(recordTimer.timer) { _ in
+                            recordTimer.updateTimerString()
+                        }
+
                     HStack {
                         BtnCircular(
-                            icon: vm.isRecording ? "pause.fill": "microphone.fill",
+                            icon: vm.getCurrentRecordState(),
                             fill: .dustBlizzard,
-                            action: {
-                                self.toggleRecording()
-//                                changeBotState(.inactive)
-//                                changeUserState(.active)
-                                
-                            })
+                            action: recordButtonAction)
                     }
                     .padding(.top, 24)
                     .frame(width: reader.size.width)
-                    .background(Color.dustBlizzard)
+                    //                    .background(Color.dustBlizzard)
                     //                    .ignoresSafeArea()
                 }
                 .frame(width: reader.size.width, height: reader.size.height)
@@ -181,9 +216,54 @@ struct DialogScreen: View {
         }
     }
 
+    private func recordButtonAction() {
+        switch vm.btnRecordState {
+        case .record:
+            recordTimer.startTime = Date()
+            recordTimer.start()
+            vm.btnRecordState = .stop
+        case .stop:
+            recordTimer.stop()
+            vm.btnRecordState = .submit
+        case .submit:
+            vm.btnRecordState = .record
+            vm.nextConversation({
+                botChibi.toggleActive()
+                botBubble.toggleState(state: .activeAuntie)
+                userBubble.toggleState(state: .inactive)
+                runAnimationTimer()
+            })
+            recordTimer.reset()
+        }
+    }
+
+    private func stringTimer() -> String {
+        return vm.btnRecordState == .stop || vm.btnRecordState == .submit
+            ? "Timer: \(recordTimer.timerString)" : ""
+    }
+
+    private func runAnimationTimer() {
+        self.isAnimatingView = true
+        animationTimer.startTime = Date()
+        animationTimer.start()
+    }
+
+    private func readAnimationTimer() {
+        if animationTimer.isRunning {
+            if animationTimer.timerString == "2.0" {
+                animationTimer.stop()
+                self.isAnimatingView = false
+                // TODO: DO SOMETHING
+                userBubble.toggleState(state: .active)
+                botChibi.toggleActive()
+                botBubble.toggleState(state: .inactive)
+                vm.nextConversation()
+            }
+        }
+    }
+
     private func changeUserState(_ state: convTalkState) {
         userBubble.toggleState(state: state)
-
     }
 
     private func changeBotState(_ state: convTalkState) {
@@ -191,18 +271,18 @@ struct DialogScreen: View {
 
         botChibi.toggleActive()
     }
-    
+
     private func toggleRecording() {
         let userTalk = vm.questionn
-        
+
         if !vm.isRecording {
             let result = vm.stopRecordingReal(
                 target: vm.questionn.highlight,
                 duration: 2.0
             )
-            
+
             print("the result is \(result)")
-            
+
             if result > 0 && result < 101 {
                 moveToNextDialogue()
             }
