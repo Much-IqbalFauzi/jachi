@@ -14,18 +14,20 @@ struct TextBubble<Content: View>: View {
     private var isUser: Bool
     private var speaker: () -> Void
     private var slow: () -> Void
-    private var translate: () -> Void
+    private var piece: () -> Void
     private var isError: Bool
     private var bubbleState: BubbleState
+    private var showPiece: Bool
 
     init(
         bubbleState: BubbleState = .init(),
         isError: Bool = false,
         radius: CGFloat = 16,
         isUser: Bool = true,
+        showPiece: Bool = false,
         speaker: @escaping () -> Void,
         slow: @escaping () -> Void,
-        translate: @escaping () -> Void,
+        piece: @escaping () -> Void,
         @ViewBuilder _ content: @escaping () -> Content
     ) {
         self.radius = radius
@@ -33,15 +35,16 @@ struct TextBubble<Content: View>: View {
         self.isUser = isUser
         self.speaker = speaker
         self.slow = slow
-        self.translate = translate
+        self.piece = piece
         self.isError = isError
         self.bubbleState = bubbleState
+        self.showPiece = showPiece
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             content()
-            if (!isError) {
+            if !isError {
                 Rectangle()
                     .frame(height: 1)
                     .foregroundColor(bubbleState.primary)
@@ -56,12 +59,14 @@ struct TextBubble<Content: View>: View {
                         color: bubbleState.primary,
                         onPress: slow
                     )
-                    .padding(.leading, 10)
-//                    PressableIcon(
-//                        icon: "translate",
-//                        color: bubbleState.primary,
-//                        onPress: translate
-//                    )
+                    .padding(.horizontal, 10)
+                    if showPiece {
+                        PressableIcon(
+                            icon: "puzzlepiece",
+                            color: bubbleState.primary,
+                            onPress: piece
+                        )
+                    }
                 }
             }
         }
@@ -83,12 +88,11 @@ struct TextBubble<Content: View>: View {
     }
 }
 
-
 #Preview {
     TextBubble(
         speaker: {},
         slow: {},
-        translate: {},
+        piece: {},
         {
 
         })

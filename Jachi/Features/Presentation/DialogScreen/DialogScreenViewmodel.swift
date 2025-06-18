@@ -5,12 +5,13 @@
 //  Created by Muchamad Iqbal Fauzi on 12/06/25.
 //
 
-import Foundation
-import SwiftUI
 import AVFoundation
-import SoundAnalysis
+import Combine
 import CoreML
+import Foundation
+import SoundAnalysis
 import Speech
+import SwiftUI
 
 enum auntieState {
     case idle
@@ -27,22 +28,22 @@ enum btnRecordState {
 
 class DialogViewmodel: NSObject, ObservableObject {
     @Published var title: String = "Dialogue De Umerto"
-    
+
     @Published private(set) var chat: [String] = []
-    
+
     @Published private(set) var chatField: [ConvTalk] = []
-    
+
     private var activeIndex: Int = 0
     private var isAnswerCorrect: Bool = false
-    
+
     private var selectedTopic: ConvTopic
-    
+
     @Published var questionn: ConvTalk = .emptyTalk
     @Published var answer: ConvTalk = .emptyTalk
-    
+
     private var questionState: convTalkState = .inactive
     private var answerState: convTalkState = .inactive
-    
+
     @Published var transcript: String = ""
     @Published var isRecording: Bool = false
     @Published var originalAudioDuration: Float = 0.0
@@ -50,8 +51,9 @@ class DialogViewmodel: NSObject, ObservableObject {
     @Published var predictedClass: String = ""
     @Published var resultCode: Int = -1
     @Published var fullRecordedAudioURL: URL? = nil
-    
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "zh-CN"))
+
+    private let speechRecognizer = SFSpeechRecognizer(
+        locale: Locale(identifier: "zh-CN"))
     private let audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -62,34 +64,43 @@ class DialogViewmodel: NSObject, ObservableObject {
     private var beforeTargetTimeOffset: TimeInterval?
     private var recordingBuffer: AVAudioPCMBuffer?
     private var recordedBuffers: [AVAudioPCMBuffer] = []
-    
+
     @Published var totalWrong: Int = 0
-    
+
     private let speechSynthesizer = AVSpeechSynthesizer()
     @Published var isSpeaking: Bool = false
-//    private let speechSynthesizer: SpeechSynthesizerProviding = SpeechSynthesizer()
-    
+    //    private let speechSynthesizer: SpeechSynthesizerProviding = SpeechSynthesizer()
+
     @Published var auntiTalk: [ConvTalk] = []
     @Published var auntiIdx: Int = 0
     @Published var userTalk: [ConvTalk] = []
     @Published var userIdx: Int = 0
     @Published var isUserTurn: Bool = true
-    
+
     @Published var btnRecordState: btnRecordState = .record
-    
+
+    // 1.
+    @ObservationIgnored
+    let soundAnalysisManager = SoundAnalysisManager.shared
+
+    @ObservationIgnored
+    var lastTime: Double = 0
+
+    var detectionStarted = false
+    var identifiedSound: (identifier: String, confidence: String)?
+    private var detectionCancellable: AnyCancellable? = nil
+
     init(topic: ConvTopic) {
         self.selectedTopic = topic
         self.questionn = topic.dialogs[activeIndex].question
         self.answer = topic.dialogs[activeIndex].answer
-        
+
         self.auntiTalk = topic.botTalk
         self.userTalk = topic.userTalk
-        
-//        self.chatField.append(topic.dialogs[activeIndex].question)
+
+        //        self.chatField.append(topic.dialogs[activeIndex].question)
     }
-    
-    
-    
+
     func getCurrentRecordState() -> String {
         switch self.btnRecordState {
         case .record:
@@ -99,11 +110,13 @@ class DialogViewmodel: NSObject, ObservableObject {
         case .submit:
             return "paperplane.fill"
         case .giveup:
-            return "chevron.right.2"
+            return "forward.end.fill"
         }
     }
-    
-    func nextConversation(_ callback: (_ isFinish: Bool) -> Void = {isFinish in }) {
+
+    func nextConversation(
+        _ callback: (_ isFinish: Bool) -> Void = { isFinish in }
+    ) {
         if isUserTurn {
             self.auntiIdx += 1
             callback(auntiIdx >= auntiTalk.count)
@@ -113,35 +126,38 @@ class DialogViewmodel: NSObject, ObservableObject {
             self.isUserTurn = true
         }
     }
-    
+
     func getActiveIndex() -> Int {
         return activeIndex + 1
     }
-    
+
     func progressFormatting() -> String {
         return "\(userIdx + 1)/\(userTalk.count)"
     }
-    
+
     func progressPercentage() -> Double {
         return Double((userIdx + 1)) / Double(userTalk.count) * 100
     }
-    
+
     func append(_ text: String) {
         chat.append(text)
     }
-    
+
     func tryAnswer() {
-        chatField.append(ConvTalk(hanzi: "Muehehe salah een", pinyin: "IYam Iyam Iyam", translate: "Buahaha", isError: true)) //, isError: true
+        chatField.append(
+            ConvTalk(
+                hanzi: "Muehehe salah een", pinyin: "IYam Iyam Iyam",
+                translate: "Buahaha", isError: true))  //, isError: true
     }
-    
+
     func checkDialogMax() -> Bool {
         return activeIndex < selectedTopic.dialogs.count - 1
     }
-    
+
     func nextQuestion() {
         activeIndex += 1
     }
-    
+
     func toggleChangeAuntieState(auntyState: auntieState) {
         switch auntyState {
         case .idle:
@@ -152,8 +168,10 @@ class DialogViewmodel: NSObject, ObservableObject {
             break
         }
     }
-    
-    func speakutterance(_ message: String, rate: Float = 0.5, pitch: Float = 1.0) {
+
+    func speakutterance(
+        _ message: String, rate: Float = 0.5, pitch: Float = 1.0
+    ) {
         let utterance = AVSpeechUtterance(string: message)
         utterance.pitchMultiplier = pitch
         utterance.rate = rate
@@ -161,7 +179,7 @@ class DialogViewmodel: NSObject, ObservableObject {
 
         speechSynthesizer.speak(utterance)
     }
-    
+
     func requestPermissions() {
         SFSpeechRecognizer.requestAuthorization { status in
             if status != .authorized {
@@ -169,196 +187,242 @@ class DialogViewmodel: NSObject, ObservableObject {
             }
         }
         #if os(iOS)
-        AVAudioSession.sharedInstance().requestRecordPermission { allowed in
-            if !allowed {
-                print("Microphone access denied")
+            AVAudioSession.sharedInstance().requestRecordPermission { allowed in
+                if !allowed {
+                    print("Microphone access denied")
+                }
             }
-        }
         #endif
     }
-    
+
+    // 2.
+    private func formattedDetectionResult(_ result: SNClassificationResult) -> (
+        identifier: String, confidence: String
+    )? {
+        guard let classification = result.classifications.first else {
+            return nil
+        }
+
+        if lastTime == 0 {
+            lastTime = result.timeRange.start.seconds
+        }
+
+        let formattedTime = String(
+            format: "%.2f", result.timeRange.start.seconds - lastTime)
+        print("Analysis result for audio at time: \(formattedTime)")
+
+        let displayName = classification.identifier.replacingOccurrences(
+            of: "_", with: " "
+        ).capitalized
+        let confidence = classification.confidence
+        let confidencePercentString = String(
+            format: "%.2f%%", confidence * 100.0)
+        print("\(displayName): \(confidencePercentString) confidence.\n")
+
+        return (displayName, confidencePercentString)
+    }
+
+    // 3.
+    func startDetection() {
+        let classificationSubject = PassthroughSubject<
+            SNClassificationResult, Error
+        >()
+
+        detectionCancellable =
+            classificationSubject
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in self.detectionStarted = false },
+                receiveValue: { result in
+                    self.identifiedSound = self.formattedDetectionResult(result)
+                })
+
+        soundAnalysisManager.startSoundClassification(
+            subject: classificationSubject)
+    }
+
+    // 4.
+    func stopDetection() {
+        lastTime = 0
+        identifiedSound = nil
+        soundAnalysisManager.stopSoundClassification()
+    }
+
     func startRecordingReal() {
         transcript = ""
         isRecording = true
         audioStartTime = Date()
         beforeTargetTimeOffset = nil
         recordedBuffers = []
-        
+
         #if os(iOS)
-        let audioSession = AVAudioSession.sharedInstance()
-        try? audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try? audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            let audioSession = AVAudioSession.sharedInstance()
+            try? audioSession.setCategory(
+                .record, mode: .measurement, options: .duckOthers)
+            try? audioSession.setActive(
+                true, options: .notifyOthersOnDeactivation)
         #endif
-        
+
         let inputNode = audioEngine.inputNode
         let format = inputNode.outputFormat(forBus: 0)
-        
+
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest = recognitionRequest else {
             print("Unable to create request")
             return
         }
-        
+
         recognitionRequest.shouldReportPartialResults = true
-        
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
+
+        recognitionTask = speechRecognizer?.recognitionTask(
+            with: recognitionRequest
+        ) { result, error in
             if let result = result {
                 DispatchQueue.main.async {
                     self.transcript = result.bestTranscription.formattedString
                     if self.beforeTargetTimeOffset == nil,
-                       self.transcript.contains(self.userTalk[self.userIdx].wordPrevix),
-                       let start = self.audioStartTime {
-                        self.beforeTargetTimeOffset = Date().timeIntervalSince(start)
+                        //                        self.transcript.contains(
+                        //                            self.userTalk[self.userIdx].wordPrevix)
+                        //                        ,
+                        let start = self.audioStartTime
+                    {
+                        self.beforeTargetTimeOffset = Date().timeIntervalSince(
+                            start)
                     }
                 }
             }
         }
-        
+
         inputNode.removeTap(onBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) {
+            buffer, _ in
             self.recognitionRequest?.append(buffer)
             self.recordedBuffers.append(buffer)
         }
-        
+
         audioEngine.prepare()
         try? audioEngine.start()
     }
-    
+
     func stopRecordingReal() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionRequest?.endAudio()
-        isRecording = false
-        
-        let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
-        
-        let fullBuffer = mergeBuffers(recordedBuffers)
-        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
-        
-        if let audioURL = saveBufferToFile(buffer: fullBuffer, sampleRate: sampleRate) {
-                self.fullRecordedAudioURL = audioURL
-            }
-        
-//        guard let beforeOffset = beforeTargetTimeOffset else {
-//            self.resultCode = 8000
-//            return 8000
-//        }
-//        
-//        let startSample = Int(beforeOffset * sampleRate)
-//        let endSample = Int((beforeOffset + Double(duration)) * sampleRate)
-//        
-//        let slicedBuffer = sliceBuffer(fullBuffer, fromSample: startSample, toSample: endSample)
-//        let slicedDuration = Float(slicedBuffer.frameLength) / Float(sampleRate)
-//        
-//        self.originalAudioDuration = fullDuration
-//        self.splicedAudioDuration = slicedDuration
-//        
-//        let result = classify(buffer: slicedBuffer, target: target)
-//        return result
-    }
-    
-    func anaylizeReal(duration: Float = 5.0) -> Int {
-        let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
-        let fullBuffer = mergeBuffers(recordedBuffers)
-        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
-        
-        
-        guard let beforeOffset = beforeTargetTimeOffset else {
-            self.resultCode = 8000
-            return 8000
+        self.audioEngine.stop()
+        self.audioEngine.inputNode.removeTap(onBus: 0)
+        self.recognitionRequest?.endAudio()
+        self.isRecording = false
+
+        let sampleRate = self.audioEngine.inputNode.outputFormat(forBus: 0)
+            .sampleRate
+
+        let fullBuffer = self.mergeBuffers(recordedBuffers)
+        //        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
+
+        if let audioURL = saveBufferToFile(
+            buffer: fullBuffer, sampleRate: sampleRate)
+        {
+            self.fullRecordedAudioURL = audioURL
         }
-        
-        let startSample = Int(beforeOffset * sampleRate)
-        let endSample = Int((beforeOffset + Double(duration)) * sampleRate)
-        
-        let slicedBuffer = sliceBuffer(fullBuffer, fromSample: startSample, toSample: endSample)
-        let slicedDuration = Float(slicedBuffer.frameLength) / Float(sampleRate)
-        
-        self.originalAudioDuration = fullDuration
-        self.splicedAudioDuration = slicedDuration
-        
-        let result = classify(buffer: slicedBuffer, target: userTalk[userIdx].highlight)
-        return result
     }
-    
+
     func captureAudio() {
-        let sampleRate = audioEngine.inputNode.outputFormat(forBus: 0).sampleRate
-        let fullBuffer = mergeBuffers(recordedBuffers)
-        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
-        
-        if let audioURL = saveBufferToFile(buffer: fullBuffer, sampleRate: sampleRate) {
-                self.fullRecordedAudioURL = audioURL
-            }
+        let sampleRate = self.audioEngine.inputNode.outputFormat(forBus: 0)
+            .sampleRate
+        let fullBuffer = self.mergeBuffers(recordedBuffers)
+        //        let fullDuration = Float(fullBuffer.frameLength) / Float(sampleRate)
+
+        if let audioURL = saveBufferToFile(
+            buffer: fullBuffer, sampleRate: sampleRate)
+        {
+            self.fullRecordedAudioURL = audioURL
+        }
     }
-    
-    private func mergeBuffers(_ buffers: [AVAudioPCMBuffer]) -> AVAudioPCMBuffer {
+
+    private func mergeBuffers(_ buffers: [AVAudioPCMBuffer]) -> AVAudioPCMBuffer
+    {
         let format = buffers.first!.format
         let totalFrameCount = buffers.reduce(0) { $0 + Int($1.frameLength) }
-        
-        guard let newBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(totalFrameCount)) else {
+
+        guard
+            let newBuffer = AVAudioPCMBuffer(
+                pcmFormat: format,
+                frameCapacity: AVAudioFrameCount(totalFrameCount))
+        else {
             fatalError("Could not create buffer")
         }
-        
+
         for buffer in buffers {
-            let dest = newBuffer.floatChannelData![0] + Int(newBuffer.frameLength)
+            let dest =
+                newBuffer.floatChannelData![0] + Int(newBuffer.frameLength)
             let src = buffer.floatChannelData![0]
-            memcpy(dest, src, Int(buffer.frameLength) * MemoryLayout<Float>.size)
+            memcpy(
+                dest, src, Int(buffer.frameLength) * MemoryLayout<Float>.size)
             newBuffer.frameLength += buffer.frameLength
         }
-        
+
         return newBuffer
     }
-    
-    func sliceBuffer(_ buffer: AVAudioPCMBuffer, fromSample: Int, toSample: Int) -> AVAudioPCMBuffer {
+
+    func sliceBuffer(_ buffer: AVAudioPCMBuffer, fromSample: Int, toSample: Int)
+        -> AVAudioPCMBuffer
+    {
         let totalSamples = Int(buffer.frameLength)
         let clampedFrom = max(0, min(fromSample, totalSamples - 1))
         let clampedTo = max(clampedFrom, min(toSample, totalSamples))
         let sliceLength = clampedTo - clampedFrom
-        
-        guard let format = AVAudioFormat(commonFormat: .pcmFormatFloat32,
-                                         sampleRate: buffer.format.sampleRate,
-                                         channels: buffer.format.channelCount,
-                                         interleaved: false),
-              let newBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(sliceLength)) else {
+
+        guard
+            let format = AVAudioFormat(
+                commonFormat: .pcmFormatFloat32,
+                sampleRate: buffer.format.sampleRate,
+                channels: buffer.format.channelCount,
+                interleaved: false),
+            let newBuffer = AVAudioPCMBuffer(
+                pcmFormat: format, frameCapacity: AVAudioFrameCount(sliceLength)
+            )
+        else {
             fatalError("Failed to allocate new buffer")
         }
-        
+
         newBuffer.frameLength = AVAudioFrameCount(sliceLength)
-        
+
         let srcPointer = buffer.floatChannelData![0] + clampedFrom
         let dstPointer = newBuffer.floatChannelData![0]
-        
+
         memcpy(dstPointer, srcPointer, sliceLength * MemoryLayout<Float>.size)
-        
+
         return newBuffer
     }
-    
+
     private func classify(buffer: AVAudioPCMBuffer, target: String) -> Int {
         let format = buffer.format
         let analyzer = SNAudioStreamAnalyzer(format: format)
-        
+
         let semaphore = DispatchSemaphore(value: 0)
         var resultCode = 99999
         var predicted = ""
-        
+
         let request: SNClassifySoundRequest
         do {
-            let model = try ModelLongWords(configuration: .init()).model
+            let model = try MySound108(configuration: .init()).model
             request = try SNClassifySoundRequest(mlModel: model)
         } catch {
             print("Model load error: \(error)")
             return 99999
         }
-        
-        let resultHandler = ClassificationResultHandler(target: target) { result, identifier in
+
+        let resultHandler = ClassificationResultHandler(target: target) {
+            result, identifier in
+            print(
+                "The possible sound is \(identifier) with a confidence of \(result)"
+            )
             resultCode = result
             predicted = identifier
             semaphore.signal()
         }
-        
+        print("From result handler \(resultHandler)")
+
         try? analyzer.add(request, withObserver: resultHandler)
         analyzer.analyze(buffer, atAudioFramePosition: 0)
-        let result = semaphore.wait(timeout: .now() + 2.0)
+        let result = semaphore.wait(timeout: .now() + 5.0)
 
         if result == .timedOut {
             print("⚠️ Classification timeout — possibly due to too short input")
@@ -370,27 +434,29 @@ class DialogViewmodel: NSObject, ObservableObject {
         self.predictedClass = predicted
         return resultCode
     }
-    
-    
+
     class ClassificationResultHandler: NSObject, SNResultsObserving {
         let target: String
         let callback: (Int, String) -> Void
-        
+
         init(target: String, callback: @escaping (Int, String) -> Void) {
             self.target = target
             self.callback = callback
         }
-        
+
         func request(_ request: SNRequest, didProduce result: SNResult) {
             guard let classificationResult = result as? SNClassificationResult,
-                  let mostConfident = classificationResult.classifications.first else {
+                let mostConfident = classificationResult.classifications.first
+            else {
                 callback(15000, "")
                 return
             }
-            
+
             let confidenceScore = Int(mostConfident.confidence * 100)
-            print("🔍 Comparing predicted: [\(mostConfident.identifier)] vs target: [\(target)]")
-            
+            print(
+                "🔍 Comparing predicted: [\(mostConfident.identifier)] vs target: [\(target)]"
+            )
+
             if mostConfident.identifier == target {
                 if confidenceScore > 50 {
                     callback(confidenceScore, mostConfident.identifier)
@@ -403,45 +469,30 @@ class DialogViewmodel: NSObject, ObservableObject {
                 callback(10000, mostConfident.identifier)
             }
         }
-        
+
         func request(_ request: SNRequest, didFailWithError error: Error) {
             print("Classifier error: \(error)")
             callback(99999, "")
         }
-        
+
         func requestDidComplete(_ request: SNRequest) {}
     }
 }
 
-extension DialogViewmodel: AVSpeechSynthesizerDelegate {
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
-        self.isSpeaking = true
-    }
-    
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        self.isSpeaking = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
-    
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        self.isSpeaking = false
-        print("Finished speaking")
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
-}
-
-
-private func saveBufferToFile(buffer: AVAudioPCMBuffer, sampleRate: Double) -> URL? {
+private func saveBufferToFile(buffer: AVAudioPCMBuffer, sampleRate: Double)
+    -> URL?
+{
     // Validate buffer
     guard buffer.frameLength > 0 else {
         print("❌ Error: Empty audio buffer - nothing to save")
         return nil
     }
-    
+
     // Create unique filename
     let filename = "recording_\(Date().timeIntervalSince1970).caf"
-    let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-    
+    let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(
+        filename)
+
     // Configure audio settings
     let settings: [String: Any] = [
         AVFormatIDKey: kAudioFormatLinearPCM,
@@ -449,9 +500,9 @@ private func saveBufferToFile(buffer: AVAudioPCMBuffer, sampleRate: Double) -> U
         AVNumberOfChannelsKey: buffer.format.channelCount,
         AVLinearPCMBitDepthKey: 32,
         AVLinearPCMIsFloatKey: true,
-        AVLinearPCMIsBigEndianKey: false
+        AVLinearPCMIsBigEndianKey: false,
     ]
-    
+
     do {
         print("💾 Attempting to save audio file with settings: \(settings)")
         let file = try AVAudioFile(forWriting: fileURL, settings: settings)

@@ -34,7 +34,7 @@ struct DummyScreen: View {
                     isUser: false,
                     speaker: {},
                     slow: {},
-                    translate: {},
+                    piece: {},
                     {
                         if(activeIdx == 0){
                             Text(dialogue.answer.hanzi)
@@ -68,7 +68,7 @@ struct DummyScreen: View {
                 TextBubble(
                     speaker: {},
                     slow: {},
-                    translate: {},
+                    piece: {},
                     {
                         if(activeIdx == 0){
                             Text(dialogue.question.hanzi)
