@@ -271,13 +271,14 @@ extension ConvTalk {
     
     // talkUser11 || talkAuntie11 -- talkAuntie14 || talkUser 14 convo2, topic1
     // yang ini
+    // xialongbao
     static let talkAuntie11 = ConvTalk(
-        hanzi: "你好！想买什么？",
-        pinyin: "Nǐ hǎo! Xiǎng mǎi shénme?",
-        translate: "Hello! What would you like to buy?",
-        highlight: "你好",
-        hanziItem: TextItem(previx: "", suffix: "！想买什么？", highlight: "你好"),
-        pinYinItem: TextItem(previx: "", suffix: "! Xiǎng mǎi shénme?", highlight: "Nǐ hǎo")
+        hanzi: "",
+        pinyin: "",
+        translate: "",
+        highlight: "",
+        hanziItem: TextItem(previx: "", suffix: "", highlight: ""),
+        pinYinItem: TextItem(previx: "", suffix: "", highlight: "")
     )
     
     static let talkUser11 = ConvTalk(
@@ -301,13 +302,13 @@ extension ConvTalk {
     )
     
     static let talkUser12 = ConvTalk(
-        hanzi: "谢谢。 如果两份这个多少钱？我要买几份",
-        pinyin: "xiè xie. Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn",
-        translate: "Thank you. If I buy two portions, how much would that be? I want to buy a few portions.",
-        highlight: "谢谢",
+        hanzi: "阿姨， 如果两份多少钱？我要买几份",
+        pinyin: "āyí. Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn",
+        translate: "Auntie. If I buy two portions, how much would that be? I want to buy a few portions.",
+        highlight: "阿姨",
         isUser: true,
-        hanziItem: TextItem(previx: "", suffix: "。 如果两份这个多少钱？我要买几份", highlight: "谢谢"),
-        pinYinItem: TextItem(previx: "", suffix: ". Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn", highlight: "xiè xie")
+        hanziItem: TextItem(previx: "", suffix: "。 如果两份多少钱？我要买几份", highlight: "阿姨"),
+        pinYinItem: TextItem(previx: "", suffix: ". Rúguǒ liǎng fèn duōshǎo qián? wǒ yào mǎi jǐ fèn", highlight: "āyí")
     )
     
     static let talkAuntie13 = ConvTalk(

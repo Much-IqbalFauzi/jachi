@@ -65,14 +65,31 @@ extension ConvTopic {
         ])
     
     static let topic3 = ConvTopic(
-        name: "Xiaolongbao",
-        hanzi: "小笼包",
+        name: "Buying Xiaolongbao",
+        hanzi: "买小笼包",
         dialog: [
             .convo11,
             .convo12,
             .convo13,
-            .convo14
-        ])
+            .convo14,
+            .convo15
+        ],
+        userTalk: [
+            .talkUser11,
+            .talkUser12,
+            .talkUser13,
+            .talkUser14,
+            .talkUser15
+        ],
+        botTalk: [
+            .emptyTalk,
+            .talkAuntie11,
+            .talkAuntie12,
+            .talkAuntie13,
+            .talkAuntie14,
+            .emptyTalk
+        ]
+    )
     
     static let topic4 = ConvTopic(
         name: "Noodles",

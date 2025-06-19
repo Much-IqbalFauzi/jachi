@@ -119,7 +119,7 @@ class DialogViewmodel: NSObject, ObservableObject {
     ) {
         if isUserTurn {
             self.auntiIdx += 1
-            callback(auntiIdx >= auntiTalk.count)
+            callback(auntiIdx >= auntiTalk.count && userIdx >= userTalk.count && userTalk[userIdx].hanzi == "")
             self.isUserTurn = false
         } else {
             self.userIdx += 1
