@@ -15,15 +15,11 @@ struct DialogScreen: View {
     @EnvironmentObject var navigation: Navigation
     @StateObject private var vm: DialogViewmodel
 
-    @StateObject private var recognizer = SpeechRecognizer()
-
     @StateObject private var userBubble: BubbleState = .init()
     @StateObject private var botBubble: BubbleState = .init(
         primary: .dustBlizzard, bg: .smokeGray)
 
     @StateObject private var botChibi: ChibiState = .init()
-    @State private var audioPlayer: AVAudioPlayer?
-    @State private var isRecording: Bool = false
 
     @ObservedObject private var recordTimer: TimerState = .init()
     @ObservedObject private var animationTimer: TimerState = .init()
@@ -36,6 +32,7 @@ struct DialogScreen: View {
 
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
+        
     }
 
     var body: some View {
@@ -44,15 +41,6 @@ struct DialogScreen: View {
             GeometryReader { reader in
                 VStack(alignment: .center) {
                     HStack(alignment: .center) {
-                        //                        ProgressView(
-                        //                            value: 1,
-                        //                            label: {},
-                        //                            currentValueLabel: {
-                        //                                Text("\(vm.progressFormatting())").padding(
-                        //                                    .top, -30)
-                        //                            }
-                        //                        )
-                        //                        .progressViewStyle(Progress())
                     }
                     .frame(width: reader.size.width)
                     //                    .padding(.bottom, 16)
@@ -110,8 +98,8 @@ struct DialogScreen: View {
                             //this one
                             TextBubble(
                                 bubbleState: botBubble,
-                                isError: vm.answer.isError,
-                                isUser: vm.answer.isUser,
+                                isError: false,
+                                isUser: false,
                                 speaker: {
                                     vm.speakutterance(
                                         vm.auntiTalk[vm.auntiIdx].hanzi,
@@ -171,23 +159,36 @@ struct DialogScreen: View {
                         .padding(.vertical, 8)
                         TextBubble(
                             bubbleState: userBubble,
-                            isError: vm.questionn.isError,
-                            isUser: vm.questionn.isUser,
+                            isError: false,
+                            isUser: true,
                             showPiece: true,
                             speaker: {
                                 vm.speakutterance(
                                     vm.userTalk[vm.userIdx].hanzi,
                                     pitch: -4)
+                                if vm.isIntroductionShown {
+                                    vm.isIntroductionShown = false
+                                    dialogTip.toggleChangeTip(.starter, true)
+                                }
+                                
                             },
                             slow: {
                                 vm.speakutterance(
                                     vm.userTalk[vm.userIdx].hanzi, rate: 0.0001,
                                     pitch: -4)
+                                if vm.isIntroductionShown {
+                                    vm.isIntroductionShown = false
+                                    dialogTip.toggleChangeTip(.starter, true)
+                                }
                             },
                             piece: {
                                 vm.speakutterance(
                                     vm.userTalk[vm.userIdx].highlight,
                                     pitch: -4)
+                                if vm.isIntroductionShown {
+                                    vm.isIntroductionShown = false
+                                    dialogTip.toggleChangeTip(.starter, true)
+                                }
                             },
                             {
                                 vm.userTalk[vm.userIdx].buildHanzi(
@@ -230,8 +231,9 @@ struct DialogScreen: View {
 
                         BtnCircular(
                             icon: vm.getCurrentRecordState(),
-                            fill: .dustBlizzard,
+                            fill: vm.isIntroductionShown ? .lightGreen : .dustBlizzard,
                             action: recordButtonAction)
+                        .disabled(vm.isIntroductionShown)
 
                         if vm.btnRecordState == .submit {
                             BtnAction(
@@ -265,34 +267,26 @@ struct DialogScreen: View {
             recordTimer.startTime = Date()
             recordTimer.start()
             vm.btnRecordState = .stop
-            //            toggleRecording()
-
-            //            vm.startRecordingReal()
-            provider.detectionStarted.toggle()
+//            provider.detectionStarted.toggle()
             provider.startDetection(vm.userTalk[vm.userIdx].highlight)
         case .stop:
             recordTimer.stop()
             vm.btnRecordState = .submit
-            //            toggleRecording()
-
-            //            vm.stopRecordingReal()
-            provider.detectionStarted.toggle()
+//            provider.detectionStarted.toggle()
             provider.stopDetection()
 
         case .submit:
             vm.btnRecordState = .record
-            if provider.isFoundSound {
+            if !provider.isFoundSound {
                 vm.nextConversation({ isFinish in
                     if isFinish {
-                        navigation.pop()
+                        navigation.navigate(to: .finish)
                     }
                     botChibi.toggleActive()
                     botBubble.toggleState(state: .activeAuntie)
                     userBubble.toggleState(state: .inactive)
                     runAnimationTimer()
-                    vm.speakutterance(
-                        vm.auntiTalk[vm.auntiIdx].hanzi,
-                        pitch: -4)
+                    
                 })
             } else {
                 vm.totalWrong += 1
@@ -307,15 +301,15 @@ struct DialogScreen: View {
             vm.totalWrong = 0
             vm.nextConversation({ isFinish in
                 if (isFinish) {
-                    navigation.pop()
+                    navigation.navigate(to: .finish)
                 }
                 botChibi.toggleActive()
                 botBubble.toggleState(state: .activeAuntie)
                 userBubble.toggleState(state: .inactive)
                 runAnimationTimer()
-                vm.speakutterance(
-                    vm.auntiTalk[vm.auntiIdx].hanzi,
-                    pitch: -4)
+//                vm.speakutterance(
+//                    vm.auntiTalk[vm.auntiIdx].hanzi,
+//                    pitch: -4)
             })
             vm.btnRecordState = .record
         }
@@ -363,48 +357,6 @@ struct DialogScreen: View {
     private func changeBotState(_ state: convTalkState) {
         botBubble.toggleState(state: state)
         botChibi.toggleActive()
-    }
-
-    private func playAudio(from url: URL) {
-        // 1. Verify file exists
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            print("❌ File doesn't exist at path: \(url.path)")
-            return
-        }
-
-        // 2. Configure audio session
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default)
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            print("❌ Audio session setup failed: \(error.localizedDescription)")
-            return
-        }
-
-        // 3. Initialize player safely
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.prepareToPlay()
-
-            // 4. Store reference and play
-            self.audioPlayer = player
-            player.play()
-//            DispatchQueue.main.async {
-//                
-//                print("✅ Playing audio successfully")
-//            }
-        } catch {
-            print(
-                "❌ Player initialization failed: \(error.localizedDescription)")
-
-            // Debug the problematic file
-            if let data = try? Data(contentsOf: url) {
-                print("File size: \(data.count) bytes")
-            } else {
-                print("Couldn't read file data")
-            }
-        }
     }
 }
 

@@ -7,6 +7,9 @@
 import SwiftUI
 
 struct SplashScreen: View {
+    
+    @EnvironmentObject var navigation: Navigation
+    
     @State private var dropShadow = false
     @State private var dropCharacter = false
     @State private var dropHat = false
@@ -65,6 +68,10 @@ struct SplashScreen: View {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 showText = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                navigation.navigate(to: .main)
             }
         }
     }

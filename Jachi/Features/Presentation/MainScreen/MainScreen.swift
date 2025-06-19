@@ -4,8 +4,12 @@ struct MainScreen: View {
     @EnvironmentObject var navigation: Navigation
 
     @State private var streakImage: Image?
-    @State private var streakText: String = "5"
-
+    private var streakText: StreakObject
+    
+    init (_ streak: StreakObject) {
+        self.streakText = streak
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
@@ -21,7 +25,7 @@ struct MainScreen: View {
                                         .frame(width: 42.62, height: 39.98)
                                     
                                     VStack(spacing: 0) {
-                                        Text(streakText)
+                                        Text("\(streakText.streak)")
                                             .font(.system(size: 28, weight: .heavy, design: .rounded))
                                             .foregroundColor(Color.darkCyan)
                                         Text("Days")
@@ -82,6 +86,6 @@ struct MainScreen: View {
 }
 
 #Preview {
-    MainScreen()
+    MainScreen(StreakObject())
         .environmentObject(Navigation())
 }
