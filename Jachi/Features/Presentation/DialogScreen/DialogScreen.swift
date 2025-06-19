@@ -233,17 +233,18 @@ struct DialogScreen: View {
                             fill: .dustBlizzard,
                             action: recordButtonAction)
 
-//                        if vm.btnRecordState == .submit {
-//                            BtnAction(
-//                                icon: "speaker.wave.2",
-//                                fill: .dustBlizzard,
-//                                action: {
+                        if vm.btnRecordState == .submit {
+                            BtnAction(
+                                icon: "speaker.wave.2",
+                                fill: .dustBlizzard,
+                                action: {
 //                                    provider.playSound()
-//                                }
-//                            )
-//                            .padding(.leading, 20)
-//
-//                        }
+                                }
+                            )
+                            .padding(.leading, 20)
+                            .opacity(0)
+
+                        }
 
                     }
                     .padding(.top, 8)

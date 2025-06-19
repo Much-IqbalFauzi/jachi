@@ -152,7 +152,7 @@ struct DialogueCardView: View {
         )
         
         DialogueCardView(
-            topic: .topic2,
+            topic: .topic3,
             topicIndex: 1,
             onTap: { print("Topic 2 tapped") }
         )
