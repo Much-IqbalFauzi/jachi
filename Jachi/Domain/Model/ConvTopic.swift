@@ -53,26 +53,26 @@ extension ConvTopic {
         ]
     )
     
-    static let topic2 = ConvTopic(
-        name: "Buying Little Baskets Bun",
-        hanzi: "三分七十快，我们的东西是精选的",
-        dialog: [
-            .convo6,
-            .convo7,
-            .convo8,
-            .convo9,
-            .convo10
-        ])
+//    static let topic2 = ConvTopic(
+//        name: "Buying Little Baskets Bun",
+//        hanzi: "三分七十快，我们的东西是精选的",
+//        dialog: [
+//            .convo6,
+//            .convo7,
+//            .convo8,
+//            .convo9,
+//            .convo10
+//        ])
     
     static let topic3 = ConvTopic(
         name: "Buying Xiaolongbao",
         hanzi: "买小笼包",
         dialog: [
-            .convo11,
-            .convo12,
-            .convo13,
-            .convo14,
-            .convo15
+//            .convo11,
+//            .convo12,
+//            .convo13,
+//            .convo14,
+//            .convo15
         ],
         userTalk: [
             .talkUser11,
@@ -95,10 +95,10 @@ extension ConvTopic {
         name: "Noodles",
         hanzi: "面条",
         dialog: [
-            .convo15,
-            .convo16,
-            .convo17,
-            .convo18
+//            .convo15,
+//            .convo16,
+//            .convo17,
+//            .convo18
         ])
 }
 
