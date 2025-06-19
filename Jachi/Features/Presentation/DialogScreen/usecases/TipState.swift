@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 class TipState: ObservableObject {
-    @Published private(set) var tipText: String = ""
-    @Published private(set) var isShowTip: Bool = false
+    @Published private(set) var tipText: String = "Click the speaker button to hear the santence"
+    @Published private(set) var isShowTip: Bool = true
 
     func toggleChangeTip(_ state: tipState, _ isShow: Bool) {
         self.isShowTip = isShow

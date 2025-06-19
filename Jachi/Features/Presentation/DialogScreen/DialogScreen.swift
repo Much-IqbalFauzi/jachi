@@ -30,7 +30,9 @@ struct DialogScreen: View {
     @ObservedObject private var dialogTip: TipState = .init()
 
     @State private var isAnimatingView: Bool = false
-    private let duration: Double = 5.0
+    private let duration: Double = 3.0
+
+    let provider = SoundDetectionProvider()
 
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
@@ -53,8 +55,8 @@ struct DialogScreen: View {
                         //                        .progressViewStyle(Progress())
                     }
                     .frame(width: reader.size.width)
-                    .padding(.bottom, 16)
-                    .padding(.top, 32)
+                    //                    .padding(.bottom, 16)
+                    .padding(.top, 8)
                     .padding(.horizontal, 16)
                     .background(Color.smokeYellow)
                     .scaledToFit()
@@ -120,7 +122,11 @@ struct DialogScreen: View {
                                         vm.auntiTalk[vm.auntiIdx].hanzi,
                                         rate: 0.0001, pitch: -4)
                                 },
-                                translate: {},
+                                piece: {
+                                    vm.speakutterance(
+                                        vm.auntiTalk[vm.auntiIdx].highlight,
+                                        pitch: -4)
+                                },
                                 {
                                     vm.auntiTalk[vm.auntiIdx].buildHanzi(
                                         botBubble.primary
@@ -167,6 +173,7 @@ struct DialogScreen: View {
                             bubbleState: userBubble,
                             isError: vm.questionn.isError,
                             isUser: vm.questionn.isUser,
+                            showPiece: true,
                             speaker: {
                                 vm.speakutterance(
                                     vm.userTalk[vm.userIdx].hanzi,
@@ -177,7 +184,11 @@ struct DialogScreen: View {
                                     vm.userTalk[vm.userIdx].hanzi, rate: 0.0001,
                                     pitch: -4)
                             },
-                            translate: {},
+                            piece: {
+                                vm.speakutterance(
+                                    vm.userTalk[vm.userIdx].highlight,
+                                    pitch: -4)
+                            },
                             {
                                 vm.userTalk[vm.userIdx].buildHanzi(
                                     userBubble.primary
@@ -196,6 +207,7 @@ struct DialogScreen: View {
                     if dialogTip.isShowTip {
                         Tips({
                             Text(dialogTip.tipText)
+                                .multilineTextAlignment(.center)
                         }).padding(.horizontal, 48)
                     }
 
@@ -207,13 +219,6 @@ struct DialogScreen: View {
                         }
 
                     HStack {
-                        //                        Text("Audio URL: \(vm.fullRecordedAudioURL?.absoluteString ?? "nil")")
-                        //                        if let url = vm.fullRecordedAudioURL {
-                        //                            Button("▶️ Play Recording") {
-                        //                                playAudio(from: url)
-                        //                            }.padding()
-                        //                        }
-
                         if vm.btnRecordState == .submit {
                             BtnAction(
                                 icon: "trash",
@@ -228,28 +233,18 @@ struct DialogScreen: View {
                             fill: .dustBlizzard,
                             action: recordButtonAction)
 
-                        if vm.btnRecordState == .submit {
-                            BtnAction(
-                                icon: "speaker.wave.2",
-                                fill: .dustBlizzard,
-                                action: {
-                                    playAudio(from: vm.fullRecordedAudioURL!)
-                                }
-                            )
-                            .padding(.leading, 20)
+//                        if vm.btnRecordState == .submit {
+//                            BtnAction(
+//                                icon: "speaker.wave.2",
+//                                fill: .dustBlizzard,
+//                                action: {
+//                                    provider.playSound()
+//                                }
+//                            )
+//                            .padding(.leading, 20)
+//
+//                        }
 
-                        }
-
-                        //                        if vm.btnRecordState == .submit{
-                        //                            BtnCircular(
-                        //                                icon: "x.circle",
-                        //                                fill: .dustBlizzard,
-                        //                                action: {
-                        //                                    vm.totalWrong += 1
-                        //                                    dialogTip.toggleChangeTip(.wrong, true)
-                        //                                })
-                        //                            .padding(.leading, 20)
-                        //                        }
                     }
                     .padding(.top, 8)
                     .frame(width: reader.size.width)
@@ -265,72 +260,70 @@ struct DialogScreen: View {
     private func recordButtonAction() {
         switch vm.btnRecordState {
         case .record:
+            dialogTip.toggleChangeTip(.netral, false)
             recordTimer.startTime = Date()
             recordTimer.start()
             vm.btnRecordState = .stop
             //            toggleRecording()
 
-            vm.startRecordingReal()
+            //            vm.startRecordingReal()
+            provider.detectionStarted.toggle()
+            provider.startDetection(vm.userTalk[vm.userIdx].highlight)
         case .stop:
             recordTimer.stop()
             vm.btnRecordState = .submit
             //            toggleRecording()
 
-            vm.stopRecordingReal()
+            //            vm.stopRecordingReal()
+            provider.detectionStarted.toggle()
+            provider.stopDetection()
+
         case .submit:
             vm.btnRecordState = .record
+            if provider.isFoundSound {
+                vm.nextConversation({ isFinish in
+                    if isFinish {
+                        navigation.pop()
+                    }
+                    botChibi.toggleActive()
+                    botBubble.toggleState(state: .activeAuntie)
+                    userBubble.toggleState(state: .inactive)
+                    runAnimationTimer()
+                    vm.speakutterance(
+                        vm.auntiTalk[vm.auntiIdx].hanzi,
+                        pitch: -4)
+                })
+            } else {
+                vm.totalWrong += 1
+                dialogTip.toggleChangeTip(.wrong, true)
+            }
+
             if vm.totalWrong >= 3 {
                 vm.btnRecordState = .giveup
-                dialogTip.toggleChangeTip(.wrong, true)
-            } else {
-                let result = vm.anaylizeReal()
-                if result > 0 && result < 101 {
-                    vm.nextConversation({ isFinish in
-                        if isFinish {
-                            navigation.pop()
-                        }
-                        botChibi.toggleActive()
-                        botBubble.toggleState(state: .activeAuntie)
-                        userBubble.toggleState(state: .inactive)
-                        runAnimationTimer()
-                        vm.speakutterance(
-                            vm.auntiTalk[vm.auntiIdx].hanzi,
-                            pitch: -4)
-                    })
-                } else {
-                    vm.totalWrong += 1
-                    dialogTip.toggleChangeTip(.wrong, true)
-                }
+                dialogTip.toggleChangeTip(.finish, true)
             }
-        //            vm.nextConversation({ isFinish in
-        //                if (isFinish) {
-        //                    navigation.pop()
-        //                }
-        //                botChibi.toggleActive()
-        //                botBubble.toggleState(state: .activeAuntie)
-        //                userBubble.toggleState(state: .inactive)
-        //                runAnimationTimer()
-        //                vm.speakutterance(
-        //                    vm.auntiTalk[vm.auntiIdx].hanzi,
-        //                    pitch: -4)
-        //            })
-        //
-        //            recordTimer.reset()
-
-        // TODO: ANALYZE ML
-
         case .giveup:
-            // TODO: Do something
-            vm.nextQuestion()
+            vm.totalWrong = 0
+            vm.nextConversation({ isFinish in
+                if (isFinish) {
+                    navigation.pop()
+                }
+                botChibi.toggleActive()
+                botBubble.toggleState(state: .activeAuntie)
+                userBubble.toggleState(state: .inactive)
+                runAnimationTimer()
+                vm.speakutterance(
+                    vm.auntiTalk[vm.auntiIdx].hanzi,
+                    pitch: -4)
+            })
+            vm.btnRecordState = .record
         }
     }
 
     private func deleteButtonAction() {
         vm.btnRecordState = .record
         recordTimer.reset()
-
         // TODO: ADD SOMETHING TO DELETE AV AUDIO SESSION
-
     }
 
     private func stringTimer() -> String {
@@ -371,51 +364,6 @@ struct DialogScreen: View {
         botChibi.toggleActive()
     }
 
-    private func toggleRecording() {
-        let userTalk = vm.questionn
-
-        if vm.isRecording {
-            // Stop recording and process audio
-            //            let result = vm.stopRecordingReal(
-            //                target: vm.questionn.highlight,
-            //                duration: 2.0
-            //            )
-
-            //            print("Recording stopped, result: \(result)")
-
-            //            if result > 0 && result < 101 {
-            //                vm.nextQuestion()
-            //            } else {
-            //                vm.totalWrong += 1
-            //                dialogTip.toggleChangeTip(.wrong, true)
-            //            }
-        } else {
-            // Start recording (reset state first)
-            vm.resultCode = -1
-            vm.originalAudioDuration = 0
-            vm.predictedClass = ""
-
-            //            vm.startRecordingReal(
-            //                beforeTarget: userTalk.wordPrevix,
-            //                target: userTalk.highlight,
-            //                duration: 2.0
-            //            )
-
-            print("Recording started")
-        }
-    }
-
-    private func readText(_ text: String) {
-        let utterance = AVSpeechUtterance(string: text)
-        if let chineseVoice = AVSpeechSynthesisVoice(language: "zh-CN") {
-            utterance.voice = chineseVoice
-        } else {
-            print("⚠️ zh-CN voice not available. Using default voice.")
-        }
-        utterance.rate = 0.5
-        AVSpeechSynthesizer().speak(utterance)
-    }
-
     private func playAudio(from url: URL) {
         // 1. Verify file exists
         guard FileManager.default.fileExists(atPath: url.path) else {
@@ -440,10 +388,11 @@ struct DialogScreen: View {
 
             // 4. Store reference and play
             self.audioPlayer = player
-            DispatchQueue.main.async {
-                player.play()
-                print("✅ Playing audio successfully")
-            }
+            player.play()
+//            DispatchQueue.main.async {
+//                
+//                print("✅ Playing audio successfully")
+//            }
         } catch {
             print(
                 "❌ Player initialization failed: \(error.localizedDescription)")
