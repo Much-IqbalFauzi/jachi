@@ -12,11 +12,13 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack(path: $navigation.path) {
-            MainScreen()
+            SplashScreen()
+                .navigationBarBackButtonHidden(true)
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .main:
                         MainScreen()
+                            .navigationBarBackButtonHidden(true)
                     case .dialog(let topic):
                         DialogScreen(topic: topic)
 //                            .navigationBarBackButtonHidden(true)
