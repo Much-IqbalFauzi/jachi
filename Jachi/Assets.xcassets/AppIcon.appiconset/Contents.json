@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "App Logo.png",
+      "filename" : "ItunesArtwork@2x 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "ItunesArtwork@2x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -24,30 +25,27 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "ItunesArtwork@2x 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     },
     {
-      "filename" : "App Logo 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "App Logo 4.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "App Logo 5.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "App Logo 6.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
@@ -73,13 +71,11 @@
       "size" : "256x256"
     },
     {
-      "filename" : "App Logo 3.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "App Logo 2.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
