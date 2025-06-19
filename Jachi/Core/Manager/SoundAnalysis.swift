@@ -28,8 +28,6 @@ final class SoundAnalysisManager: NSObject {
 
     static let shared = SoundAnalysisManager()
 
-    private override init() {}
-
     private func setupAudioEngine() {
         audioEngine = AVAudioEngine()
         let inputBus = AVAudioNodeBus(0)
@@ -145,6 +143,7 @@ final class SoundAnalysisManager: NSObject {
         inferenceWindowSize: Double? = nil,
         overlapFactor: Double? = nil
     ) {
+        self.bufferTrack = []
         do {
             // a.
             let observer = ResultsObserver(subject: subject)
@@ -175,7 +174,7 @@ final class SoundAnalysisManager: NSObject {
     // 5.
     func stopSoundClassification() {
         // a.
-        buildAudioBufferList()
+//        buildAudioBufferList()
         autoreleasepool {
             // b.
             if let audioEngine = audioEngine {
@@ -191,7 +190,7 @@ final class SoundAnalysisManager: NSObject {
             retainedObserver = nil
             audioEngine = nil
         }
-        self.bufferTrack = []
+//        self.bufferTrack = []
     }
     
     // 6.

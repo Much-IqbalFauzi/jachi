@@ -29,4 +29,5 @@ enum Route: Hashable {
     case main
     case dialog(topic: ConvTopic)
     case dummy
+    case finish
 }
