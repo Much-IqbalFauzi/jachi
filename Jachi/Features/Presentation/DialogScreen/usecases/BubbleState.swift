@@ -13,11 +13,9 @@ class BubbleState: ObservableObject {
     @Published private(set) var bg: Color
     @Published private(set) var isActive: Bool
     
-    
-    
     init() {
-        self.primary = .dustBlizzard
-        self.bg = .lynxWhite
+        self.primary = .dustPink
+        self.bg = .candyFloss
         self.isActive = true
     }
     
@@ -30,8 +28,8 @@ class BubbleState: ObservableObject {
     func toggleState(state: convTalkState) {
         switch state {
         case .active:
-            self.primary = .dustBlizzard
-            self.bg = .lynxWhite
+            self.primary = .dustPink
+            self.bg = .candyFloss
             self.isActive = true
         case .inactive:
             self.primary = .dustBlizzard

@@ -24,20 +24,21 @@ enum btnRecordState {
     case stop
     case submit
     case giveup
+    case end
 }
 
 class DialogViewmodel: NSObject, ObservableObject {
-    
+
     private var activeIndex: Int = 0
     private var isAnswerCorrect: Bool = false
 
     private var selectedTopic: ConvTopic
 
     private let speechSynthesizer = AVSpeechSynthesizer()
-    
+
     @Published var isSpeaking: Bool = false
     @Published var totalWrong: Int = 0
-    
+
     @Published var auntiTalk: [ConvTalk] = []
     @Published var auntiIdx: Int = 0
     @Published var userTalk: [ConvTalk] = []
@@ -45,7 +46,7 @@ class DialogViewmodel: NSObject, ObservableObject {
     @Published var isUserTurn: Bool = true
 
     @Published var btnRecordState: btnRecordState = .record
-    
+
     @Published var isIntroductionShown: Bool = true
 
     init(topic: ConvTopic) {
@@ -65,16 +66,21 @@ class DialogViewmodel: NSObject, ObservableObject {
             return "paperplane.fill"
         case .giveup:
             return "forward.end.fill"
+        case .end:
+            return "house.badge.exclamationmark"
         }
     }
 
     func nextConversation(
         _ callback: (_ isFinish: Bool) -> Void = { isFinish in }
     ) {
-        callback((userIdx + 1) >= (userTalk.count - 1) || userIdx == userTalk.count || userTalk[userIdx].hanzi == "")
+        if ((userIdx + 1) >= (userTalk.count - 1) || userIdx == userTalk.count
+            || userTalk[userIdx].hanzi == "") {
+            btnRecordState = .end
+        }
         if isUserTurn {
             self.auntiIdx += 1
-//            callback(auntiIdx >= auntiTalk.count || userIdx == userTalk.count || userTalk[userIdx].hanzi == "")
+            //            callback(auntiIdx >= auntiTalk.count || userIdx == userTalk.count || userTalk[userIdx].hanzi == "")
             speakutterance(
                 self.auntiTalk[self.auntiIdx].hanzi,
                 pitch: -4
@@ -124,6 +130,14 @@ class DialogViewmodel: NSObject, ObservableObject {
         utterance.pitchMultiplier = pitch
         utterance.rate = rate
         utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(
+                AVAudioSession.Category.multiRoute)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print(error.localizedDescription)
+        }
 
         speechSynthesizer.speak(utterance)
     }
