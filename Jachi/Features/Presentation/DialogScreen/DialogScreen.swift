@@ -32,7 +32,7 @@ struct DialogScreen: View {
 
     init(topic: ConvTopic) {
         _vm = StateObject(wrappedValue: DialogViewmodel(topic: topic))
-        
+
     }
 
     var body: some View {
@@ -170,7 +170,7 @@ struct DialogScreen: View {
                                     vm.isIntroductionShown = false
                                     dialogTip.toggleChangeTip(.starter, true)
                                 }
-                                
+
                             },
                             slow: {
                                 vm.speakutterance(
@@ -229,18 +229,33 @@ struct DialogScreen: View {
                             .padding(.trailing, 20)
                         }
 
-                        BtnCircular(
-                            icon: vm.getCurrentRecordState(),
-                            fill: vm.isIntroductionShown ? .lightGreen : .dustBlizzard,
-                            action: recordButtonAction)
-                        .disabled(vm.isIntroductionShown)
+                        switch vm.btnRecordState {
+                        case .end:
+                            BtnRounded(
+                                text: "End Session",
+                                trailingIcon: vm.getCurrentRecordState(),
+                                action: recordButtonAction)
+                        case .giveup:
+                            BtnRounded(
+                                text: "Next",
+                                trailingIcon: vm.getCurrentRecordState(),
+                                action: recordButtonAction)
+                        default:
+                            BtnCircular(
+                                icon: vm.getCurrentRecordState(),
+                                fill: vm.isIntroductionShown
+                                    ? .lightGreen : .dustBlizzard,
+                                action: recordButtonAction
+                            )
+                            .disabled(vm.isIntroductionShown)
+                        }
 
                         if vm.btnRecordState == .submit {
                             BtnAction(
                                 icon: "speaker.wave.2",
                                 fill: .dustBlizzard,
                                 action: {
-//                                    provider.playSound()
+                                    //                                    provider.playSound()
                                 }
                             )
                             .padding(.leading, 20)
@@ -267,27 +282,22 @@ struct DialogScreen: View {
             recordTimer.startTime = Date()
             recordTimer.start()
             vm.btnRecordState = .stop
-//            provider.detectionStarted.toggle()
+            //            provider.detectionStarted.toggle()
             provider.startDetection(vm.userTalk[vm.userIdx].highlight)
         case .stop:
             recordTimer.stop()
             vm.btnRecordState = .submit
-//            provider.detectionStarted.toggle()
+            //            provider.detectionStarted.toggle()
             provider.stopDetection()
 
         case .submit:
             vm.btnRecordState = .record
             if !provider.isFoundSound {
-                vm.nextConversation({ isFinish in
-                    if isFinish {
-                        navigation.navigate(to: .finish)
-                    }
-                    botChibi.toggleActive()
-                    botBubble.toggleState(state: .activeAuntie)
-                    userBubble.toggleState(state: .inactive)
-                    runAnimationTimer()
-                    
-                })
+                vm.nextConversation()
+                botChibi.toggleActive()
+                botBubble.toggleState(state: .activeAuntie)
+                userBubble.toggleState(state: .inactive)
+                runAnimationTimer()
             } else {
                 vm.totalWrong += 1
                 dialogTip.toggleChangeTip(.wrong, true)
@@ -299,19 +309,17 @@ struct DialogScreen: View {
             }
         case .giveup:
             vm.totalWrong = 0
-            vm.nextConversation({ isFinish in
-                if (isFinish) {
-                    navigation.navigate(to: .finish)
-                }
-                botChibi.toggleActive()
-                botBubble.toggleState(state: .activeAuntie)
-                userBubble.toggleState(state: .inactive)
-                runAnimationTimer()
-//                vm.speakutterance(
-//                    vm.auntiTalk[vm.auntiIdx].hanzi,
-//                    pitch: -4)
-            })
+            vm.nextConversation()
+            vm.speakutterance(
+                vm.auntiTalk[vm.auntiIdx].hanzi,
+                pitch: -4)
+            botChibi.toggleActive()
+            botBubble.toggleState(state: .activeAuntie)
+            userBubble.toggleState(state: .inactive)
+            runAnimationTimer()
             vm.btnRecordState = .record
+        case .end:
+            navigation.navigate(to: .finish)
         }
     }
 
