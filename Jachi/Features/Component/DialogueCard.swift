@@ -96,6 +96,10 @@ struct DialogueCardView: View {
                                 }
                                 
                                 Spacer()
+                                // DUMMY TO ARROW DETAIL 
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color.lightGreen)
+                                    .font(.system(size: 14, weight: .semibold))
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 12)
@@ -104,17 +108,17 @@ struct DialogueCardView: View {
                         // Progress Bar Section (kalau belum 100%)
                         if progressValue < 1.0 {
                             HStack(spacing: 8) {
-                                ProgressView(value: progressValue)
-                                    .progressViewStyle(LinearProgressViewStyle())
-                                    .accentColor(Color.lightGreen)
-                                    .scaleEffect(x: 1, y: 3)
+//                                ProgressView(value: progressValue)
+//                                    .progressViewStyle(LinearProgressViewStyle())
+//                                    .accentColor(Color.lightGreen)
+//                                    .scaleEffect(x: 1, y: 3)
                                 
-                                Text("\(Int(progressValue * 100))%")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundColor(Color.lightGreen)
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(Color.lightGreen)
-                                    .font(.system(size: 14, weight: .semibold))
+//                                Text("\(Int(progressValue * 100))%")
+//                                    .font(.system(size: 13, weight: .semibold))
+//                                    .foregroundColor(Color.lightGreen)
+//                                Image(systemName: "chevron.right")
+//                                    .foregroundColor(Color.lightGreen)
+//                                    .font(.system(size: 14, weight: .semibold))
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
