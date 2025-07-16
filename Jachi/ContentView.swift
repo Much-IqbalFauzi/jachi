@@ -7,11 +7,10 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
 struct ContentView: View {
     @StateObject private var navigation = Navigation()
-//    @AppStorage("streak") var streak = 0
-    @ObservedObject var streak: StreakObject = .init()
     
     var body: some View {
         NavigationStack(path: $navigation.path) {
@@ -20,7 +19,7 @@ struct ContentView: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .main:
-                        MainScreen(streak)
+                        MainScreen()
                             .navigationBarBackButtonHidden(true)
                     case .dialog(let topic):
                         DialogScreen(topic: topic)
@@ -29,17 +28,13 @@ struct ContentView: View {
                     case .dummy:
                         DummyScreen()
                     case .finish:
-                        FinishScreen(streak: streak)
+                        FinishScreen()
                             .navigationBarBackButtonHidden(true)
                     }
                 }
         }
+        .modelContainer(for: [StreakLearn.self])
         .environmentObject(navigation)
         .preferredColorScheme(.light)
     }
-}
-
-
-class StreakObject: ObservableObject {
-    @Published var streak: Int = 0
 }

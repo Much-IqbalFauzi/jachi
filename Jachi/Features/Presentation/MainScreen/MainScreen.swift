@@ -1,16 +1,14 @@
 import SwiftUI
+import SwiftData
 
 struct MainScreen: View {
     @EnvironmentObject var navigation: Navigation
-
-    @State private var streakImage: Image?
-    private var streakText: StreakObject
+    @Query var streakCounter: [StreakLearn]
     
-    init (_ streak: StreakObject) {
-        self.streakText = streak
-    }
+    @State private var streakImage: Image?
     
     var body: some View {
+        let counter = streakCounter.first ?? StreakLearn()
         GeometryReader { geometry in
             ZStack(alignment: .top) {
                 Image("Background")
@@ -25,7 +23,7 @@ struct MainScreen: View {
                                         .frame(width: 42.62, height: 39.98)
                                     
                                     VStack(spacing: 0) {
-                                        Text("\(streakText.streak)")
+                                        Text("\(counter.total)")
                                             .font(.system(size: 28, weight: .heavy, design: .rounded))
                                             .foregroundColor(Color.darkCyan)
                                         Text("Days")
@@ -68,7 +66,6 @@ struct MainScreen: View {
                                     topic: topic,
                                     topicIndex: index,
                                     onTap: {
-                                        print("telah dipencet")
                                         navigation.navigate(to: .dialog(topic: topic))
                                     }
                                 )
@@ -86,6 +83,6 @@ struct MainScreen: View {
 }
 
 #Preview {
-    MainScreen(StreakObject())
+    MainScreen()
         .environmentObject(Navigation())
 }

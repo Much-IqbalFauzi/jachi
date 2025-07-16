@@ -43,29 +43,10 @@ struct DialogScreen: View {
                     HStack(alignment: .center) {
                     }
                     .frame(width: reader.size.width)
-                    //                    .padding(.bottom, 16)
                     .padding(.top, 8)
                     .padding(.horizontal, 16)
                     .background(Color.smokeYellow)
                     .scaledToFit()
-
-                    Rectangle()
-                        .fill(Color.lightGreen)
-                        .frame(height: 5)
-                        .frame(
-                            width: isAnimatingView ? reader.size.width : 0,
-                            alignment: .leading
-                        )
-                        .animation(
-                            .linear(duration: duration),
-                            value: isAnimatingView
-                        )
-                        .opacity(isAnimatingView ? 1 : 0)
-                        .onReceive(animationTimer.timer) { timer in
-                            animationTimer.updateTimerString()
-                            readAnimationTimer()
-                        }
-                        .padding(.top, -8)
 
                     HStack {
                         Image(botChibi.state)
@@ -75,27 +56,34 @@ struct DialogScreen: View {
                             .frame(width: 120)
                             .padding(.leading, 16)
                         VStack {
-                            Text("Auntie Jachi")
-                                .font(.system(size: 16, weight: .semibold))
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .foregroundColor(Color(botBubble.primary))
-                                .background(Color(botBubble.bg))
-                                .cornerRadius(16)
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(
-                                            Color(botBubble.primary),
-                                            lineWidth: 2)
+                            HStack() {
+                                Text("Auntie Jachi")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .foregroundColor(Color(botBubble.primary))
+                                    .background(Color(botBubble.bg))
+                                    .cornerRadius(16)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(
+                                                Color(botBubble.primary),
+                                                lineWidth: 2)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                if isAnimatingView {
+                                    Image(systemName: "speaker.wave.3.fill")
+                                        .foregroundStyle(Color.smokeBlue)
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .symbolEffect(.variableColor.cumulative.hideInactiveLayers)
+                                        .onReceive(animationTimer.timer) { timer in
+                                            animationTimer.updateTimerString()
+                                            readAnimationTimer()
+                                        }
                                 }
-                                //                            BorderedText("Auntie Jachi", bubbleState: botBubble)
-                                .frame(
-                                    maxWidth: .infinity,
-                                    alignment: .leading
-                                )
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                            //this one
+                                Spacer()
+                            }
                             TextBubble(
                                 bubbleState: botBubble,
                                 isError: false,
@@ -310,9 +298,9 @@ struct DialogScreen: View {
         case .giveup:
             vm.totalWrong = 0
             vm.nextConversation()
-            vm.speakutterance(
-                vm.auntiTalk[vm.auntiIdx].hanzi,
-                pitch: -4)
+//            vm.speakutterance(
+//                vm.auntiTalk[vm.auntiIdx].hanzi,
+//                pitch: -4)
             botChibi.toggleActive()
             botBubble.toggleState(state: .activeAuntie)
             userBubble.toggleState(state: .inactive)
